@@ -1,0 +1,5 @@
+Version 1.0.1 - (14 November, 2021)
+
+- Bug Fixed
+  1. Collection & Product no thumbnail issue
+  2. No blogs issue
