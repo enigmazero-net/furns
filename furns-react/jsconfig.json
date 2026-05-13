@@ -12,7 +12,6 @@
       "@utils/*": ["src/utils/*"],
       "@public/*": ["public/*"],
       "@styled": ["src/styled"],
-      "@graphql": ["src/graphql"],
       "@bootstrap": ["src/styled/bootstrap"]
     }
   }

@@ -2,10 +2,10 @@ import Head from "next/head";
 import {Fragment} from "react";
 import settings from "@data/settings";
 import Layout from "@components/layout";
-import {client, blogQuery} from "@graphql";
 import Loader from "@components/ui/loader";
 import Breadcrumb from "@components/ui/breadcrumb";
 import PostDetailsContent from "@components/blog/details";
+import {getPostByHandle} from "@data/catalog";
 
 const BlogDetailsPage = ({post}) => {
     return (
@@ -34,11 +34,12 @@ const BlogDetailsPage = ({post}) => {
 
 export const getServerSideProps = async ({params}) => {
     const {slug} = params;
-    const postData = await client(blogQuery({slug}));
-    const post = postData?.blogs?.edges[0]?.node?.articleByHandle;
+    const post = getPostByHandle(slug);
 
     if (!post) {
-        throw new Error(`Blog Post with slug '${slug}' not found!`);
+        return {
+            notFound: true
+        };
     }
 
     return {

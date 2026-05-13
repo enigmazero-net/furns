@@ -5,10 +5,10 @@ import Layout from "@components/layout";
 import Loader from "@components/ui/loader";
 import Breadcrumb from "@components/ui/breadcrumb";
 import {Fragment, useState, useEffect} from "react";
-import {client, productsQuery, productQuery} from "@graphql";
 import ProductDetailsContent from "@components/product/details";
 import RelatedProducts from "@components/product/feed/related-products";
 import ProductDescriptionReview from "@components/product/details/desc-review";
+import {getProductByHandle, getProducts} from "@data/catalog";
 
 const ProductDetailsPage = ({products, product}) => {
     const router = useRouter();
@@ -56,21 +56,18 @@ const ProductDetailsPage = ({products, product}) => {
 
 export const getServerSideProps = async ({params}) => {
     const {slug} = params;
-    const product = await client(productQuery(slug));
-    const products = await client(productsQuery());
+    const product = getProductByHandle(slug);
 
     if (!product) {
-        throw new Error(`Product with slug '${slug}' not found`);
-    }
-
-    if (!products) {
-        throw new Error(`Products fetching error!`);
+        return {
+            notFound: true
+        };
     }
 
     return {
         props: {
-            product: product?.productByHandle,
-            products: products?.products?.edges,
+            product,
+            products: getProducts(),
         },
     };
 };

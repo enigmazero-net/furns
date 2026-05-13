@@ -3,8 +3,8 @@ import settings from "@data/settings";
 import Layout from "@components/layout";
 import ShopProductsFeed from "@components/shop";
 import EmptyProduct from "@components/ui/empty";
-import {client, collectionQuery} from "@graphql";
 import Breadcrumb from "@components/ui/breadcrumb";
+import {getCollectionByHandle, getProducts} from "@data/catalog";
 
 const CollectionPage = ({collection}) => {
     return (
@@ -32,15 +32,15 @@ const CollectionPage = ({collection}) => {
 export const getServerSideProps = async ({params, query}) => {
     const {slug} = params;
     const {sort} = query;
-    const sortKey = sort?.split("-")[0].toUpperCase();
-    const reverse = sort?.split("-")[1] !== "ascending";
-    const collectionData = await client(collectionQuery(slug, sortKey, reverse));
+    const collection = getCollectionByHandle(slug);
 
     return {
         props: {
             collection: {
-                title: collectionData?.collectionByHandle?.title,
-                products: collectionData?.collectionByHandle?.products?.edges,
+                title: collection?.title || slug,
+                products: getProducts({sort}).filter(({node}) => (
+                    node.collections.edges.some(({node: item}) => item?.handle === slug)
+                )),
             },
         }
     };

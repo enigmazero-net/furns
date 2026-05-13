@@ -4,9 +4,8 @@ import {
     ContactWrapper,
     ContactInfoItem,
     ContactContentWrap,
-    ContactContentTitle, ContactInfoMethod, ContactInfoText, ContactForm
+    ContactContentTitle, ContactInfoMethod, ContactInfoText, ContactForm, InputField
 } from "@components/contact/contact.style";
-import {InputField} from "@components/checkout/checkout-form.style";
 import Input, {TextArea} from "@components/ui/input";
 import Button from "@components/ui/button";
 

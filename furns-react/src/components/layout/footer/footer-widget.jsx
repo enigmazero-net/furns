@@ -66,11 +66,11 @@ const FooterWidget = (props) => {
                             mb={[30, null, null, 0]}
                         >
                             <Ul className="widget-list">
-                                <Li><Link href="/signin">Login</Link></Li>
+                                <Li><Link href="/cart">Cart</Link></Li>
                                 <Li><Link href="/cart">My Cart</Link></Li>
                                 <Li><Link href="/wishlist">Wishlist</Link></Li>
                                 <Li><Link href="/compare">Compare</Link></Li>
-                                <Li><Link href="/signin">My Account</Link></Li>
+                                <Li><Link href="/compare">Compare</Link></Li>
                             </Ul>
                         </Widget>
                     </Col>

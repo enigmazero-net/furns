@@ -1,0 +1,10 @@
+{
+  "name": "furns",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix furns-react run dev",
+    "build": "npm --prefix furns-react run build",
+    "start": "npm --prefix furns-react run start"
+  }
+}

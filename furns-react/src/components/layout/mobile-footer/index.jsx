@@ -2,7 +2,7 @@ import {Container} from "@bootstrap";
 import {useRouter} from "next/router";
 import {useSelector} from "react-redux";
 import {AiOutlineHome} from "react-icons/ai";
-import {BiUser, BiHeart} from "react-icons/bi";
+import {BiHeart} from "react-icons/bi";
 import {IoIosGitCompare} from "react-icons/io";
 import {HiOutlineShoppingBag} from "react-icons/hi";
 import {getCartProductsQuantity} from "@utils/product";
@@ -37,10 +37,6 @@ const MobileFooter = ({onMiniCartHandler}) => {
                         <span>Cart</span>
                         <CartItemCount>{cartQuantity}</CartItemCount>
                     </HeaderActionBtn>
-                    <button onClick={() => router.push('/account')}>
-                        <BiUser/>
-                        <span>Account</span>
-                    </button>
                 </FooterButtons>
             </Container>
         </MobileFooterWrap>

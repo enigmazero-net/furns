@@ -7,7 +7,7 @@ import Categories from "@components/categories";
 import sliderData from "@data/slider/home-1.json";
 import {ProductsTab} from "@components/product/feed";
 import {SliderOne as Slider} from "@components/slider";
-import {client, blogsQuery, productsQuery, collectionsQuery} from "@graphql";
+import {collectionEdges, getProducts, postEdges} from "@data/catalog";
 
 const Home = ({blogs, products, collections}) => {
     return (
@@ -30,22 +30,12 @@ const Home = ({blogs, products, collections}) => {
     );
 };
 
-export const getStaticProps = async () => {
-    const blogsData = await client(blogsQuery(4)),
-        blogs = blogsData?.blogs?.edges[0]?.node?.articles?.edges,
-        productsData = await client(productsQuery(50)),
-        products = productsData?.products?.edges,
-        collectionsData = await client(collectionsQuery(5)),
-        collections = collectionsData?.collections?.edges;
-
-    return {
-        props: {
-            blogs,
-            products,
-            collections,
-        },
-        revalidate: 60,
-    };
-};
+export const getStaticProps = async () => ({
+    props: {
+        blogs: postEdges,
+        products: getProducts({limit: 50}),
+        collections: collectionEdges.slice(0, 5),
+    },
+});
 
 export default Home;

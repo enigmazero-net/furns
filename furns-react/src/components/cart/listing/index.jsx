@@ -1,10 +1,6 @@
-import {useState} from "react";
-import {useRouter} from "next/router";
-import {useIsLoggedIn} from "@hooks";
 import {CURRENCY} from "@utils/constant";
 import Button from "@components/ui/button";
 import Coupon from "@components/cart/coupon";
-import {createCheckout, client} from "@graphql";
 import {getCartTotalPrice} from "@utils/product";
 import CartItem from "@components/cart/cart-product";
 import {useDispatch, useSelector} from "react-redux";
@@ -21,39 +17,12 @@ import {
 } from "@components/cart/listing/style";
 
 const CartList = (props) => {
-    const router = useRouter();
     const dispatch = useDispatch();
-    const customer = useSelector((state) => state.customer);
     const cart = useSelector((state) => state.shoppingCart);
     const totalProductsPrice = getCartTotalPrice(cart);
 
-    const [isLoading, setIsLoading] = useState(false);
-    const isLoggedIn = useIsLoggedIn();
-
     const onCheckoutHandler = () => {
-        const variables = {
-            input: {
-                lineItems: cart?.map((item) => {
-                    return {
-                        quantity: item?.quantity,
-                        variantId: item?.variations?.id,
-                    };
-                }),
-                email: customer?.email,
-            },
-        };
-        setIsLoading(true);
-        if (isLoggedIn) {
-            client(createCheckout(), variables).then((res) => {
-                setIsLoading(false);
-                if (res?.checkoutCreate?.checkout) {
-                    window.open(res?.checkoutCreate?.checkout?.webUrl, "_blank");
-                }
-                dispatch(clearCartAction());
-            });
-        } else {
-            router.push("/signin");
-        }
+        dispatch(clearCartAction());
     };
 
     return (
@@ -115,7 +84,6 @@ const CartList = (props) => {
                                     hvrBg="primary"
                                     hvrColor="white"
                                     borderRadius="sm"
-                                    loading={isLoading}
                                     onClick={() => onCheckoutHandler()}
                                     className="btn-checkout mt-3 mt-sm-0"
                                 >

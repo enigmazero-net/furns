@@ -4,6 +4,12 @@ export const ContactForm = styled.div`
 
 `
 
+export const InputField = styled.div`
+  &:not(:last-child) {
+    margin-bottom: 20px;
+  }
+`
+
 export const ContactInfoText = styled.div`
   a {
     color: ${themeGet("colors.text")};

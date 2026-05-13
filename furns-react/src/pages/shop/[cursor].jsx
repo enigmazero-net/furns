@@ -1,9 +1,9 @@
 import Head from "next/head";
 import settings from "@data/settings";
 import Layout from "@components/layout";
-import {client, productsQuery} from "@graphql";
 import ShopProductsFeed from "@components/shop";
 import Breadcrumb from "@components/ui/breadcrumb";
+import {getProducts} from "@data/catalog";
 
 const ShopPageWithPaginate = ({products}) => {
     return (
@@ -22,15 +22,10 @@ const ShopPageWithPaginate = ({products}) => {
 
 export const getServerSideProps = async ({query}) => {
     const {sort} = query;
-    const sortKey = sort?.split("-")[0].toUpperCase();
-    const reverse = sort?.split("-")[1] !== "ascending";
-
-    const productsData = await client(productsQuery(20, sortKey, reverse)),
-        products = productsData?.products?.edges;
 
     return {
         props: {
-            products,
+            products: getProducts({sort, limit: 20}),
         },
     };
 };

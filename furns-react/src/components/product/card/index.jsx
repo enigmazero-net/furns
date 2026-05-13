@@ -35,8 +35,6 @@ const ProductCard = ({product, className}) => {
 
     const percentage = getDiscountPercentage(price, compareAtPrice);
 
-    console.log(percentage)
-
     return (
         <Fragment>
             <Product className={cn(className)}>

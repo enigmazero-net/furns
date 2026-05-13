@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { useState } from "react";
 import PropTypes from "prop-types";
-import { useIsLoggedIn } from "@hooks";
 import Logo from "@components/ui/logo";
 import { useSelector } from "react-redux";
 import { Col, Container, Row } from "@bootstrap";
@@ -30,7 +29,6 @@ const HeaderBottom = ({
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const shoppingCart = useSelector((state) => state.shoppingCart);
   const cartQuantity = getCartProductsQuantity(shoppingCart);
-  const isLoggedIn = useIsLoggedIn();
 
   return (
     <HeaderBottomWrap>
@@ -89,15 +87,6 @@ const HeaderBottom = ({
                   align="center"
                   className={isDropdownOpen ? "show" : "hide"}
                 >
-                  {isLoggedIn ? (
-                    <li>
-                      <Link href="/account">My Account</Link>
-                    </li>
-                  ) : (
-                    <li>
-                      <Link href="/signin">Signin</Link>
-                    </li>
-                  )}
                   <li>
                     <Link href="/cart">Cart</Link>
                   </li>
@@ -107,11 +96,6 @@ const HeaderBottom = ({
                   <li>
                     <Link href="/compare">Compare</Link>
                   </li>
-                  {isLoggedIn && (
-                    <li>
-                      <Link href="/logout">Logout</Link>
-                    </li>
-                  )}
                 </DropdownMenu>
               </ActionItem>
 
