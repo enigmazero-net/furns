@@ -1,17 +1,17 @@
 [
   {
     "id": 1,
-    "title": "Sale Furniture <br> For Summer",
-    "content": "Great Discounts Here",
-    "thumb": "/images/banner/1.jpg",
+    "title": "Bedroom Pieces <br> For Calm Spaces",
+    "content": "Fresh arrivals now in store",
+    "thumb": "/images/furniture/bed_2.jpeg",
     "slug": "/shop",
     "align": "right"
   },
   {
     "id": 2,
-    "title": "Office Chair  <br> For Best Offer",
-    "content": "Great Discounts Here",
-    "thumb": "/images/banner/2.jpg",
+    "title": "Entry Storage <br> For Daily Use",
+    "content": "Organized essentials start here",
+    "thumb": "/images/furniture/shoe_2.jpeg",
     "slug": "/shop",
     "align": "left"
   }

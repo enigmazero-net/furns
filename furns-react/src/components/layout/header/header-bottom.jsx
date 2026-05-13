@@ -90,12 +90,6 @@ const HeaderBottom = ({
                   <li>
                     <Link href="/cart">Cart</Link>
                   </li>
-                  <li>
-                    <Link href="/wishlist">Wishlist</Link>
-                  </li>
-                  <li>
-                    <Link href="/compare">Compare</Link>
-                  </li>
                 </DropdownMenu>
               </ActionItem>
 

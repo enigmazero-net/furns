@@ -18,6 +18,7 @@ const Post = ({post, className, ...props}) => {
                         width={400}
                         height={250}
                         layout="responsive"
+                        objectFit="cover"
                         src={image?.originalSrc}
                     />
                 </a>

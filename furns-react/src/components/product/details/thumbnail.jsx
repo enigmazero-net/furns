@@ -35,6 +35,7 @@ const ProductDetailsThumb = ({thumbnails}) => {
                                 <Image
                                     layout="fill"
                                     alt="furns"
+                                    objectFit="cover"
                                     src={image?.node?.originalSrc}
                                 />
                             </figure>
@@ -53,6 +54,7 @@ const ProductDetailsThumb = ({thumbnails}) => {
                                         width={108}
                                         height={108}
                                         alt="furns"
+                                        objectFit="cover"
                                         src={image?.node?.originalSrc}
                                     />
                                 </figure>

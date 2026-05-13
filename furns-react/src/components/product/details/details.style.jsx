@@ -284,31 +284,6 @@ export const ProductActionButton = styled.div`
     }
   }
 
-  .wishlist-compare-button {
-    margin-top: 20px;
-
-    .btn {
-      padding: 0;
-      border: none;
-      line-height: 1;
-      color: ${themeGet('colors.text')};
-      font-family: ${themeGet('fonts.body')};
-      font-size: ${themeGet('fontSizes.standard')};
-
-      &:not(:last-child) {
-        margin-right: 20px;
-      }
-
-      svg {
-        margin-right: 2px;
-        vertical-align: bottom;
-      }
-
-      &:hover {
-        color: ${themeGet('colors.primary')};
-      }
-    }
-  }
 `
 
 export const ProductSwatchItem = styled.div`

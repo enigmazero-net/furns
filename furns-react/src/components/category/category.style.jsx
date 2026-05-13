@@ -18,6 +18,7 @@ export const CatItemInner = styled.div`
 
   img {
     margin: auto;
+    border-radius: ${themeGet('radii.circle')};
   }
 `
 

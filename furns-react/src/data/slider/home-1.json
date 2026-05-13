@@ -2,15 +2,15 @@
   {
     "id": 1,
     "subtitle": "New Products",
-    "title": "Flexible Chair",
-    "content": "Torem ipsum dolor sit amet, consectetur adipisicing elitsed do eiusmo tempor incididunt ut labore et dolore magna",
-    "thumb": "/images/slider-image/slider-1.png"
+    "title": "Modern Sofas",
+    "content": "Comfortable living room seating with clean lines, soft cushions, and versatile styling.",
+    "thumb": "/images/furniture/couch_2.jpeg"
   },
   {
     "id": 2,
     "subtitle": "Best Seller",
-    "title": "Creative Sofa",
-    "content": "Torem ipsum dolor sit amet, consectetur adipisicing elitsed do eiusmo tempor incididunt ut labore et dolore magna",
-    "thumb": "/images/slider-image/slider-2.png"
+    "title": "Bedroom Comfort",
+    "content": "Bright bedroom pieces built around calm mornings, practical storage, and soft textures.",
+    "thumb": "/images/furniture/bed_1.jpeg"
   }
 ]

@@ -2,20 +2,6 @@
   {
     "text": "Home",
     "link": "/",
-    "submenu": [
-      {
-        "list": [
-          {
-            "text": "Home 1",
-            "link": "/"
-          },
-          {
-            "text": "Home 2",
-            "link": "/home-2"
-          }
-        ]
-      }
-    ],
     "mega_menu": false
   },
   {
@@ -34,8 +20,8 @@
             "link": "/collection/bedroom"
           },
           {
-            "text": "Dining",
-            "link": "/collection/dining"
+            "text": "Chairs",
+            "link": "/collection/chairs"
           },
           {
             "text": "Living",
@@ -47,41 +33,18 @@
     "mega_menu": false
   },
   {
-    "text": "Office Furniture",
+    "text": "Storage",
     "link": "/",
     "submenu": [
       {
         "list": [
           {
-            "text": "Lounge",
-            "link": "/collection/lounge"
+            "text": "Laundry",
+            "link": "/collection/laundry"
           },
           {
-            "text": "Office Chair",
-            "link": "/collection/office-chair"
-          },
-          {
-            "text": "Office Table",
-            "link": "/collection/office-table"
-          }
-        ]
-      }
-    ],
-    "mega_menu": false
-  },
-  {
-    "text": "Hospital Furniture",
-    "link": "/",
-    "submenu": [
-      {
-        "list": [
-          {
-            "text": "Hospital Bed",
-            "link": "/collection/hospital-bed"
-          },
-          {
-            "text": "Hospital Utility",
-            "link": "/collection/hospital-utility"
+            "text": "Shoe Storage",
+            "link": "/collection/shoe-storage"
           }
         ]
       }

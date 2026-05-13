@@ -10,9 +10,10 @@ const Category = ({category, icon, slug}) => {
             <CategoryItem>
                 <CatItemInner>
                     <Image
-                        width={65}
-                        height={65}
+                        width={78}
+                        height={78}
                         alt={category}
+                        objectFit="cover"
                         src={icon ? icon : placeholder}
                     />
                     <CatName>{category}</CatName>

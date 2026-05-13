@@ -19,6 +19,8 @@ const ProductThumbnail = ({product}) => {
                                     alt={title}
                                     width={270}
                                     height={318}
+                                    layout="responsive"
+                                    objectFit="cover"
                                     src={thumb.originalSrc}
                                 />
                             </div>
@@ -28,6 +30,8 @@ const ProductThumbnail = ({product}) => {
                             alt={title}
                             width={270}
                             height={318}
+                            layout="responsive"
+                            objectFit="cover"
                             src={placeholder}
                         />
                     )}

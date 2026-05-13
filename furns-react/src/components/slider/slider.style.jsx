@@ -3,6 +3,11 @@ import styled, {devices, themeGet, css, typography} from "@styled";
 export const SliderThumb = styled.div`
   &:not(.style-2) {
     img {
+      width: 100%;
+      height: 458px;
+      object-fit: cover;
+      object-position: center;
+
       ${devices.md} {
         height: 250px;
       }

@@ -10,9 +10,7 @@ import {excerpt, toCapitalize} from "@utils/method";
 import {
     IoLogoTwitter,
     IoLogoLinkedin,
-    IoLogoFacebook,
-    IoIosHeartEmpty,
-    IoIosGitCompare
+    IoLogoFacebook
 } from "react-icons/io";
 import {
     ProductSKU,
@@ -45,12 +43,8 @@ const ProductDetailsContent = ({product, ...props}) => {
         quantity,
         variations,
         isDiscounted,
-        isInWishlist,
         compareAtPrice,
-        isInCompareList,
         onVariantHandler,
-        onCompareHandler,
-        onWishlistHandler,
         onIncrementQuantity,
         cartProductQuantity,
         onDecrementQuantity
@@ -188,20 +182,6 @@ const ProductDetailsContent = ({product, ...props}) => {
                     </Button>
                 </div>
 
-                <div className="wishlist-compare-button">
-                    <button
-                        className="btn btn--wishlist"
-                        onClick={() => onWishlistHandler()}
-                    >
-                        <IoIosHeartEmpty/> {!isInWishlist ? 'Add to wishlist' : 'Remove from wishlist'}
-                    </button>
-                    <button
-                        className="btn btn--compare"
-                        onClick={() => onCompareHandler()}
-                    >
-                        <IoIosGitCompare/> {!isInCompareList ? 'Add to Compare' : 'Remove from compare'}
-                    </button>
-                </div>
             </ProductActionButton>
 
             <ProductSocialShare>

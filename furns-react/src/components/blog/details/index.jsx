@@ -30,6 +30,7 @@ const PostDetailsContent = ({post}) => {
                                     width={900}
                                     height={500}
                                     alt={title}
+                                    objectFit="cover"
                                     src={image?.originalSrc}
                                 />
                             </BlogPostThumb>

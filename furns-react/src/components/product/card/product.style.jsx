@@ -155,11 +155,9 @@ export const ActionButton = styled.button`
     line-height: 1;
   }
 
-  &:not(.wishlist) {
-    visibility: hidden;
-    transform: translateY(20px);
-    opacity: 0;
-  }
+  visibility: hidden;
+  transform: translateY(20px);
+  opacity: 0;
 
   ${({isActive}) => isActive && css`
     color: ${themeGet('colors.primary')};
@@ -287,6 +285,10 @@ export const ProductImage = styled.div`
   .thumb {
     z-index: 1;
     max-width: 100%;
+
+    img {
+      object-position: center;
+    }
 
     &.hover-image {
       position: absolute;

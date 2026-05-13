@@ -3,7 +3,7 @@ import styled, {css, devices, themeGet} from "@styled";
 export const PromoTitle = styled.h3`
   font-size: 30px;
   line-height: 39px;
-  margin-bottom: 16px;
+  margin-bottom: 10px;
   color: ${themeGet('colors.heading')};
   font-weight: ${themeGet('fontWeights.subHeading')};
 
@@ -14,6 +14,22 @@ export const PromoTitle = styled.h3`
 `
 export const PromoContent = styled.div`
   align-self: center;
+  max-width: 330px;
+  padding: 22px 24px;
+  border-radius: ${themeGet('radii.sm')};
+  background-color: rgba(255, 255, 255, 0.84);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+
+  p {
+    margin-bottom: 0;
+    color: ${themeGet('colors.heading')};
+    font-weight: ${themeGet('fontWeights.medium')};
+  }
+
+  ${devices.xs} {
+    max-width: 270px;
+    padding: 16px 18px;
+  }
 `
 
 export const PromoInfo = styled.div`
@@ -47,8 +63,21 @@ export const PromoItem = styled.a`
   position: relative;
   margin-top: 30px;
 
+  figure {
+    position: relative;
+
+    &:after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: rgba(255, 255, 255, 0.08);
+    }
+  }
+
   img {
     width: 100%;
+    object-position: center;
     transition: ${themeGet('transition')};
   }
 `

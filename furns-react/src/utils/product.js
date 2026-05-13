@@ -68,16 +68,6 @@ export const getCartProduct = (shoppingCart, product, variations) => {
     return shoppingCart.find(item => (item.id === product.id) && (item.variations === variations));
 }
 
-/***
- * Get Product from Compare & Wishlist
- * @param products
- * @param product
- * @returns {*}
- */
-export const getWishCompareProduct = (products, product) => {
-    return products.find(item => item.id === product.id);
-}
-
 /****
  * Get Discounted Products
  * @param products

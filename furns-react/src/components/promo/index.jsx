@@ -18,6 +18,7 @@ const Promo = ({title, content, thumb, slug, className, align}) => {
                         width={570}
                         height={290}
                         layout="responsive"
+                        objectFit="cover"
                     />
                 </figure>
                 <PromoInfo align={align ? align : 'left'}>
