@@ -35,6 +35,18 @@ export const collections = [
         image: image("/images/furniture/chair_3.jpeg"),
     },
     {
+        id: "collection-dining",
+        title: "Dining",
+        handle: "dining",
+        image: image("/images/furniture/dinning_table_1.jpeg"),
+    },
+    {
+        id: "collection-office",
+        title: "Office",
+        handle: "office",
+        image: image("/images/furniture/computer_desk_1.jpeg"),
+    },
+    {
         id: "collection-laundry",
         title: "Laundry",
         handle: "laundry",
@@ -46,6 +58,12 @@ export const collections = [
         handle: "shoe-storage",
         image: image("/images/furniture/shoe_1.jpeg"),
     },
+    {
+        id: "collection-service",
+        title: "Service Trolleys",
+        handle: "service-trolleys",
+        image: image("/images/furniture/service-trolley_3.jpeg"),
+    },
 ];
 
 const collectionEdge = (handle) => {
@@ -53,79 +71,63 @@ const collectionEdge = (handle) => {
     return collection ? edge(collection) : null;
 };
 
+const product = ({
+    id,
+    title,
+    description,
+    imageSrc,
+    price,
+    compareAtPrice = null,
+    stock = 10,
+    tags = [],
+    collections: collectionHandles = [],
+    optionName = "Finish",
+    optionValue = "Standard",
+}) => ({
+    id: `product-${id}`,
+    title,
+    handle: id,
+    description,
+    descriptionHtml: `<p>${description}</p>`,
+    tags,
+    images: {edges: [edge(image(imageSrc))]},
+    variants: {edges: [variant(`variant-${id}`, optionValue, price, compareAtPrice, stock)]},
+    options: [{id: `option-${id}`, name: optionName, values: [optionValue.toLowerCase()]}],
+    collections: {edges: collectionHandles.map(collectionEdge).filter(Boolean)},
+});
+
 export const products = [
-    {
-        id: "product-aurora-sofa",
-        title: "Aurora Fabric Sofa",
-        handle: "aurora-fabric-sofa",
-        description: "A comfortable three-seat sofa with soft woven fabric, tapered legs, and deep cushions for relaxed living rooms.",
-        descriptionHtml: "<p>A comfortable three-seat sofa with soft woven fabric, tapered legs, and deep cushions for relaxed living rooms.</p>",
-        tags: ["featured", "living"],
-        images: {edges: [edge(image("/images/furniture/couch_2.jpeg")), edge(image("/images/furniture/couch_3.jpeg"))]},
-        variants: {edges: [variant("variant-aurora-charcoal", "Charcoal", 899, 1099, 12)]},
-        options: [{id: "option-aurora-color", name: "Color", values: ["charcoal"]}],
-        collections: {edges: [collectionEdge("living")]},
-    },
-    {
-        id: "product-harbor-bed",
-        title: "Harbor Platform Bed",
-        handle: "harbor-platform-bed",
-        description: "A low-profile bed frame with a padded headboard and solid timber slats for everyday durability.",
-        descriptionHtml: "<p>A low-profile bed frame with a padded headboard and solid timber slats for everyday durability.</p>",
-        tags: ["featured", "bedroom"],
-        images: {edges: [edge(image("/images/furniture/bed_1.jpeg")), edge(image("/images/furniture/bed_2.jpeg"))]},
-        variants: {edges: [variant("variant-harbor-queen", "Queen", 749, 899, 8)]},
-        options: [{id: "option-harbor-size", name: "Size", values: ["queen"]}],
-        collections: {edges: [collectionEdge("bedroom")]},
-    },
-    {
-        id: "product-nova-accent-chair",
-        title: "Nova Accent Chair",
-        handle: "nova-accent-chair",
-        description: "A sculpted accent chair with a soft blue seat, curved back, and slim tapered legs.",
-        descriptionHtml: "<p>A sculpted accent chair with a soft blue seat, curved back, and slim tapered legs.</p>",
-        tags: ["tending", "chairs"],
-        images: {edges: [edge(image("/images/furniture/chair_3.jpeg")), edge(image("/images/furniture/chair_2.jpeg"))]},
-        variants: {edges: [variant("variant-nova-blue", "Blue", 329, null, 15)]},
-        options: [{id: "option-nova-color", name: "Color", values: ["blue"]}],
-        collections: {edges: [collectionEdge("chairs")]},
-    },
-    {
-        id: "product-woven-laundry-hamper",
-        title: "Woven Laundry Hamper",
-        handle: "woven-laundry-hamper",
-        description: "A textured laundry basket with a generous woven body for towels, linens, and daily wash loads.",
-        descriptionHtml: "<p>A textured laundry basket with a generous woven body for towels, linens, and daily wash loads.</p>",
-        tags: ["featured", "laundry"],
-        images: {edges: [edge(image("/images/furniture/laundry_3.jpeg")), edge(image("/images/furniture/laundry_2.jpeg")), edge(image("/images/furniture/laundry_1.jpeg"))]},
-        variants: {edges: [variant("variant-hamper-natural", "Natural", 149, 199, 18)]},
-        options: [{id: "option-hamper-finish", name: "Finish", values: ["natural"]}],
-        collections: {edges: [collectionEdge("laundry")]},
-    },
-    {
-        id: "product-luna-lounge-chair",
-        title: "Luna Lounge Chair",
-        handle: "luna-lounge-chair",
-        description: "An accent chair with a curved back, generous seat, and textured upholstery.",
-        descriptionHtml: "<p>An accent chair with a curved back, generous seat, and textured upholstery.</p>",
-        tags: ["tending", "chairs"],
-        images: {edges: [edge(image("/images/furniture/chair_2.jpeg")), edge(image("/images/furniture/chair_1.jpeg"))]},
-        variants: {edges: [variant("variant-luna-sand", "Sand", 299, 379, 10)]},
-        options: [{id: "option-luna-color", name: "Color", values: ["sand"]}],
-        collections: {edges: [collectionEdge("chairs"), collectionEdge("living")]},
-    },
-    {
-        id: "product-entryway-shoe-rack",
-        title: "Entryway Shoe Rack",
-        handle: "entryway-shoe-rack",
-        description: "A compact open rack that keeps everyday shoes organized near the entryway.",
-        descriptionHtml: "<p>A compact open rack that keeps everyday shoes organized near the entryway.</p>",
-        tags: ["sale", "shoe-storage"],
-        images: {edges: [edge(image("/images/furniture/shoe_1.jpeg")), edge(image("/images/furniture/shoe_2.jpeg"))]},
-        variants: {edges: [variant("variant-shoe-rack-oak", "Oak", 219, 279, 9)]},
-        options: [{id: "option-shoe-rack-finish", name: "Finish", values: ["oak"]}],
-        collections: {edges: [collectionEdge("shoe-storage")]},
-    },
+    product({id: "aurora-fabric-sofa", title: "Aurora Fabric Sofa", description: "A comfortable three-seat sofa with soft woven fabric and deep cushions for relaxed living rooms.", imageSrc: "/images/furniture/couch_1.jpeg", price: 899, compareAtPrice: 1099, stock: 12, tags: ["featured", "sale", "living"], collections: ["living"], optionName: "Color", optionValue: "Silver"}),
+    product({id: "navy-lounge-sofa", title: "Navy Lounge Sofa", description: "A low modern sofa with rich upholstery and a polished living room profile.", imageSrc: "/images/furniture/couch_2.jpeg", price: 949, stock: 9, tags: ["living"], collections: ["living"], optionName: "Color", optionValue: "Navy"}),
+    product({id: "blue-velvet-sofa", title: "Blue Velvet Sofa", description: "A statement sofa with tapered legs, velvet texture, and a compact lounge footprint.", imageSrc: "/images/furniture/couch_3.jpeg", price: 829, stock: 7, tags: ["living"], collections: ["living"], optionName: "Color", optionValue: "Blue"}),
+
+    product({id: "harbor-platform-bed", title: "Harbor Platform Bed", description: "A low-profile bed frame with a padded headboard and solid timber slats for everyday durability.", imageSrc: "/images/furniture/bed_1.jpeg", price: 749, stock: 8, tags: ["featured", "bedroom"], collections: ["bedroom"], optionName: "Size", optionValue: "Queen"}),
+    product({id: "calm-storage-bed", title: "Calm Storage Bed", description: "A bright bedroom setup with a soft upholstered headboard and practical surrounding storage.", imageSrc: "/images/furniture/bed_2.jpeg", price: 799, compareAtPrice: 899, stock: 6, tags: ["sale", "bedroom"], collections: ["bedroom"], optionName: "Size", optionValue: "Queen"}),
+    product({id: "oak-headboard-bed", title: "Oak Headboard Bed", description: "A relaxed bed frame with a natural timber headboard and warm minimal styling.", imageSrc: "/images/furniture/bed_3.jpeg", price: 699, stock: 10, tags: ["bedroom"], collections: ["bedroom"], optionName: "Size", optionValue: "Queen"}),
+
+    product({id: "vintage-cafe-chair", title: "Vintage Cafe Chair", description: "A lightweight cafe chair with curved metalwork and a distinctive painted finish.", imageSrc: "/images/furniture/chair_1.jpeg", price: 189, stock: 16, tags: ["chairs"], collections: ["chairs"], optionName: "Color", optionValue: "Teal"}),
+    product({id: "blue-work-chair", title: "Blue Work Chair", description: "A compact upholstered chair with a swivel base for bright workspaces.", imageSrc: "/images/furniture/chair_2.jpeg", price: 249, stock: 13, tags: ["tending", "chairs"], collections: ["chairs"], optionName: "Color", optionValue: "Blue"}),
+    product({id: "nova-accent-chair", title: "Nova Accent Chair", description: "A sculpted accent chair with a soft blue seat, curved back, and slim tapered legs.", imageSrc: "/images/furniture/chair_3.jpeg", price: 329, stock: 15, tags: ["featured", "chairs"], collections: ["chairs"], optionName: "Color", optionValue: "Blue"}),
+
+    product({id: "woven-laundry-hamper", title: "Woven Laundry Hamper", description: "A textured laundry basket with a generous woven body for towels, linens, and daily wash loads.", imageSrc: "/images/furniture/laundry_1.jpeg", price: 129, stock: 18, tags: ["laundry"], collections: ["laundry"], optionName: "Finish", optionValue: "Blue"}),
+    product({id: "covered-laundry-basket", title: "Covered Laundry Basket", description: "A tall laundry basket with a fitted lid and room for everyday towels and linens.", imageSrc: "/images/furniture/laundry_2.jpeg", price: 149, stock: 14, tags: ["featured", "laundry"], collections: ["laundry"], optionName: "Finish", optionValue: "Beige"}),
+    product({id: "woven-clothes-basket", title: "Woven Clothes Basket", description: "A natural woven basket with open storage for laundry rooms and utility spaces.", imageSrc: "/images/furniture/laundry_3.jpeg", price: 159, stock: 12, tags: ["laundry"], collections: ["laundry"], optionName: "Finish", optionValue: "Natural"}),
+
+    product({id: "camden-dining-table", title: "Camden Dining Table", description: "A clean dining table with a warm timber finish and practical proportions for everyday meals.", imageSrc: "/images/furniture/dinning_table_1.jpeg", price: 679, stock: 7, tags: ["featured", "dining"], collections: ["dining"], optionName: "Finish", optionValue: "Natural"}),
+    product({id: "urban-dining-table", title: "Urban Dining Table", description: "A compact dining set with a darker finish and a grounded everyday dining feel.", imageSrc: "/images/furniture/dinning_table_2.jpeg", price: 729, compareAtPrice: 829, stock: 5, tags: ["sale", "dining"], collections: ["dining"], optionName: "Finish", optionValue: "Walnut"}),
+    product({id: "family-dining-table", title: "Family Dining Table", description: "A full dining arrangement with room for shared meals and casual hosting.", imageSrc: "/images/furniture/dinning_table_3.jpeg", price: 849, stock: 6, tags: ["dining"], collections: ["dining"], optionName: "Finish", optionValue: "Oak"}),
+
+    product({id: "axis-computer-desk", title: "Axis Computer Desk", description: "A compact computer desk with a focused work surface, storage space, and a clean home-office profile.", imageSrc: "/images/furniture/computer_desk_1.jpeg", price: 389, stock: 11, tags: ["featured", "office"], collections: ["office"], optionName: "Finish", optionValue: "Walnut"}),
+    product({id: "nord-computer-desk", title: "Nord Computer Desk", description: "A light computer desk with practical shelving and a tidy work-from-home footprint.", imageSrc: "/images/furniture/computer_desk_2.jpeg", price: 429, stock: 9, tags: ["office"], collections: ["office"], optionName: "Finish", optionValue: "White"}),
+    product({id: "studio-computer-desk", title: "Studio Computer Desk", description: "A slim computer desk designed for small offices, study corners, and daily laptop use.", imageSrc: "/images/furniture/computer_desk_3.jpeg", price: 359, stock: 10, tags: ["office"], collections: ["office"], optionName: "Finish", optionValue: "Oak"}),
+
+    product({id: "entryway-shoe-bench", title: "Entryway Shoe Bench", description: "A wood shoe bench that keeps daily footwear organized near the entryway.", imageSrc: "/images/furniture/shoe_1.jpeg", price: 219, stock: 9, tags: ["shoe-storage"], collections: ["shoe-storage"], optionName: "Finish", optionValue: "Oak"}),
+    product({id: "white-shoe-rack", title: "White Shoe Rack", description: "A clean open shoe rack with two shelves for compact entry and closet storage.", imageSrc: "/images/furniture/shoe_2.jpeg", price: 179, stock: 11, tags: ["shoe-storage"], collections: ["shoe-storage"], optionName: "Finish", optionValue: "White"}),
+    product({id: "slim-shoe-shelf", title: "Slim Shoe Shelf", description: "A slim black shoe shelf with open tiers and a simple modern profile.", imageSrc: "/images/furniture/shoe_3.jpeg", price: 199, stock: 12, tags: ["featured", "shoe-storage"], collections: ["shoe-storage"], optionName: "Finish", optionValue: "Black"}),
+
+    product({id: "folding-service-trolley", title: "Folding Service Trolley", description: "A compact service trolley with a folding frame for flexible home and dining support.", imageSrc: "/images/furniture/service-trolley_1.jpeg", price: 169, stock: 14, tags: ["service-trolleys"], collections: ["service-trolleys"], optionName: "Color", optionValue: "White"}),
+    product({id: "wood-service-trolley", title: "Wood Service Trolley", description: "A warm rolling trolley with open shelves for dining rooms, kitchens, and service areas.", imageSrc: "/images/furniture/service-trolley_2.jpeg", price: 229, compareAtPrice: 279, stock: 8, tags: ["sale", "service-trolleys"], collections: ["service-trolleys"], optionName: "Finish", optionValue: "Natural"}),
+    product({id: "utility-service-trolley", title: "Utility Service Trolley", description: "A practical multi-tier service trolley for mobile storage and everyday utility work.", imageSrc: "/images/furniture/service-trolley_3.jpeg", price: 189, stock: 10, tags: ["service-trolleys", "storage"], collections: ["service-trolleys"], optionName: "Color", optionValue: "Black"}),
 ];
 
 export const posts = [

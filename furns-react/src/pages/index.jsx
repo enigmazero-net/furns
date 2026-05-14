@@ -30,7 +30,7 @@ const Home = ({products, collections}) => {
 export const getStaticProps = async () => ({
     props: {
         products: getProducts({limit: 50}),
-        collections: collectionEdges.slice(0, 5),
+        collections: collectionEdges,
     },
 });
 

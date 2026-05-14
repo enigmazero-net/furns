@@ -71,14 +71,14 @@ export const ProductMeta = styled.div`
 
 const buttonStyle = css`
   border: 0;
-  width: 80%;
+  width: 100%;
   z-index: 11;
-  height: 32px;
+  height: 42px;
   display: none;
-  font-size: 13px;
-  line-height: 32px;
+  font-size: 14px;
+  line-height: 42px;
   text-align: center;
-  margin: 10px auto 0;
+  margin: 12px auto 0;
   color: ${themeGet('colors.white')};
   transition: ${themeGet('transition')};
   border-radius: ${themeGet('radii.sm')};
@@ -101,19 +101,11 @@ const buttonStyle = css`
   }
 
   ${({mobile}) => !mobile && css`
-    left: 0;
-    right: 0;
-    opacity: 0;
-    bottom: 20px;
-    height: 45px;
     display: block;
-    line-height: 45px;
-    position: absolute;
-    visibility: hidden;
-    transform: translateY(20px);
-    color: ${themeGet('colors.secondary')};
+    position: static;
+    color: ${themeGet('colors.white')};
     font-size: ${themeGet('fontSizes.standard')};
-    background-color: ${themeGet('colors.white')};
+    background-color: ${themeGet('colors.primary')};
 
     ${devices.md} {
       display: none;
@@ -331,11 +323,11 @@ export const Product = styled.div`
     }
 
     ${AddToCartButton} {
-      ${hvrVisible}
+      opacity: 0.92;
     }
 
     ${SelectOptionButton} {
-      ${hvrVisible}
+      opacity: 0.92;
     }
   }
 `

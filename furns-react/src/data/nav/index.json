@@ -24,12 +24,21 @@
             "link": "/collection/chairs"
           },
           {
+            "text": "Dining",
+            "link": "/collection/dining"
+          },
+          {
             "text": "Living",
             "link": "/collection/living"
           }
         ]
       }
     ],
+    "mega_menu": false
+  },
+  {
+    "text": "Office",
+    "link": "/collection/office",
     "mega_menu": false
   },
   {
@@ -45,6 +54,10 @@
           {
             "text": "Shoe Storage",
             "link": "/collection/shoe-storage"
+          },
+          {
+            "text": "Service Trolleys",
+            "link": "/collection/service-trolleys"
           }
         ]
       }

@@ -25,7 +25,7 @@ export const getServerSideProps = async ({query}) => {
 
     return {
         props: {
-            products: getProducts({sort, limit: 20}),
+            products: getProducts({sort, limit: 50}),
         },
     };
 };

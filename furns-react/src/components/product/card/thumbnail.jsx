@@ -1,4 +1,3 @@
-import cn from "classnames";
 import Link from "next/link";
 import PropTypes from 'prop-types';
 import Image from "@components/ui/image";
@@ -7,24 +6,23 @@ import {ProductImage} from "./product.style";
 
 const ProductThumbnail = ({product}) => {
     const {title, images, handle} = product;
+    const thumb = images?.edges?.[0]?.node;
 
     return (
         <ProductImage>
             <Link href={`/product/${handle}`}>
                 <a>
-                    {images?.edges?.length > 0 ? (
-                        images?.edges?.slice(0, 2).map(({node: thumb}, idx) => (
-                            <div key={idx} className={cn("thumb", {"hover-image": idx === 1})}>
-                                <Image
-                                    alt={title}
-                                    width={270}
-                                    height={318}
-                                    layout="responsive"
-                                    objectFit="cover"
-                                    src={thumb.originalSrc}
-                                />
-                            </div>
-                        ))
+                    {thumb ? (
+                        <div className="thumb">
+                            <Image
+                                alt={title}
+                                width={270}
+                                height={318}
+                                layout="responsive"
+                                objectFit="cover"
+                                src={thumb.originalSrc}
+                            />
+                        </div>
                     ) : (
                         <Image
                             alt={title}
