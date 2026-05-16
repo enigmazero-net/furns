@@ -3,7 +3,7 @@ import settings from "@data/settings";
 import Layout from "@components/layout";
 import ShopProductsFeed from "@components/shop";
 import Breadcrumb from "@components/ui/breadcrumb";
-import {getProducts} from "@data/catalog";
+import {fetchProducts} from "@services/api";
 
 const ShopPageWithPaginate = ({products}) => {
     return (
@@ -25,7 +25,7 @@ export const getServerSideProps = async ({query}) => {
 
     return {
         props: {
-            products: getProducts({sort, limit: 50}),
+            products: await fetchProducts({sort, limit: 50}),
         },
     };
 };

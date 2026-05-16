@@ -9,6 +9,7 @@
       "@global/*": ["src/global/*"],
       "@slices/*": ["src/global/slices/*"],
       "@hooks": ["src/hooks"],
+      "@services/*": ["src/services/*"],
       "@utils/*": ["src/utils/*"],
       "@public/*": ["public/*"],
       "@styled": ["src/styled"],

@@ -6,7 +6,7 @@ import Categories from "@components/categories";
 import sliderData from "@data/slider/home-1.json";
 import {ProductsTab} from "@components/product/feed";
 import {SliderOne as Slider} from "@components/slider";
-import {collectionEdges, getProducts} from "@data/catalog";
+import {fetchCategories, fetchProducts} from "@services/api";
 
 const Home = ({products, collections}) => {
     return (
@@ -27,11 +27,18 @@ const Home = ({products, collections}) => {
     );
 };
 
-export const getStaticProps = async () => ({
-    props: {
-        products: getProducts({limit: 50}),
-        collections: collectionEdges,
-    },
-});
+export const getServerSideProps = async () => {
+    const [products, collections] = await Promise.all([
+        fetchProducts({limit: 50}),
+        fetchCategories(),
+    ]);
+
+    return {
+        props: {
+            products,
+            collections,
+        },
+    };
+};
 
 export default Home;

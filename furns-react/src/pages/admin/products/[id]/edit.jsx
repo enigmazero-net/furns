@@ -1,10 +1,13 @@
 import Head from "next/head";
-import {useRouter} from "next/router";
+import {useState} from "react";
+import cogoToast from "cogo-toast";
 import settings from "@data/settings";
 import Layout from "@components/layout";
 import Input, {TextArea} from "@components/ui/input";
 import Button from "@components/ui/button";
 import Breadcrumb from "@components/ui/breadcrumb";
+import {fetchProductById, normalizeAdminProduct, updateAdminProductStock} from "@services/api";
+import {getAccessToken, loginWithKeycloak} from "@services/auth";
 import {Col, Container, Row} from "@bootstrap";
 import {ServiceFlow} from "@components/furns";
 import {adminProducts, serviceFlows} from "@data/furns";
@@ -19,9 +22,36 @@ import {
     PanelTitle,
 } from "@components/furns/furns.style";
 
-const AdminEditProductPage = () => {
-    const router = useRouter();
-    const product = adminProducts.find((item) => item.id === router.query.id) || adminProducts[0];
+const AdminEditProductPage = ({product}) => {
+    const [stock, setStock] = useState(product.stock);
+    const [isSaving, setIsSaving] = useState(false);
+
+    const onSaveHandler = async () => {
+        const token = getAccessToken();
+        if (!token) {
+            await loginWithKeycloak(`/admin/products/${product.id}/edit`);
+            return;
+        }
+
+        setIsSaving(true);
+
+        try {
+            await updateAdminProductStock(token, product.id, stock);
+            cogoToast.success("Product stock updated.", {
+                position: "top-right",
+                heading: "Saved",
+                hideAfter: 3,
+            });
+        } catch (error) {
+            cogoToast.error(error.message || "Stock update failed.", {
+                position: "top-right",
+                heading: "Save Failed",
+                hideAfter: 4,
+            });
+        } finally {
+            setIsSaving(false);
+        }
+    };
 
     return (
         <Layout>
@@ -51,7 +81,12 @@ const AdminEditProductPage = () => {
                                         <Input id="price" label="Price" defaultValue={product.price}/>
                                     </FieldBlock>
                                     <FieldBlock>
-                                        <Input id="stock" label="Stock Quantity" defaultValue={product.stock}/>
+                                        <Input
+                                            id="stock"
+                                            label="Stock Quantity"
+                                            value={stock}
+                                            onChange={(event) => setStock(event.target.value)}
+                                        />
                                     </FieldBlock>
                                     <FieldBlock>
                                         <Input id="status" label="Status" defaultValue={product.status}/>
@@ -66,8 +101,15 @@ const AdminEditProductPage = () => {
                                     </FullWidth>
                                 </FormGrid>
                                 <ActionRow>
-                                    <Button tag="button" bg="primary" color="white" hvrBg="secondary">
-                                        Save Changes
+                                    <Button
+                                        tag="button"
+                                        bg="primary"
+                                        color="white"
+                                        hvrBg="secondary"
+                                        loading={isSaving}
+                                        onClick={onSaveHandler}
+                                    >
+                                        Save Stock
                                     </Button>
                                     <Button tag="a" href="/admin/products" bg="secondary" color="white" hvrBg="primary">
                                         Back To Products
@@ -85,5 +127,15 @@ const AdminEditProductPage = () => {
     );
 };
 
-export default AdminEditProductPage;
+export const getServerSideProps = async ({params}) => {
+    const apiProduct = await fetchProductById(params.id);
+    const fallback = adminProducts.find((item) => item.id === params.id) || adminProducts[0];
 
+    return {
+        props: {
+            product: apiProduct ? normalizeAdminProduct(apiProduct) : fallback,
+        },
+    };
+};
+
+export default AdminEditProductPage;

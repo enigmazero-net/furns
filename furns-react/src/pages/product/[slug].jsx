@@ -8,7 +8,7 @@ import {Fragment, useState, useEffect} from "react";
 import ProductDetailsContent from "@components/product/details";
 import RelatedProducts from "@components/product/feed/related-products";
 import ProductDescriptionReview from "@components/product/details/desc-review";
-import {getProductByHandle, getProducts} from "@data/catalog";
+import {fetchProductBySlug, fetchProducts} from "@services/api";
 
 const ProductDetailsPage = ({products, product}) => {
     const router = useRouter();
@@ -56,7 +56,7 @@ const ProductDetailsPage = ({products, product}) => {
 
 export const getServerSideProps = async ({params}) => {
     const {slug} = params;
-    const product = getProductByHandle(slug);
+    const product = await fetchProductBySlug(slug);
 
     if (!product) {
         return {
@@ -67,7 +67,7 @@ export const getServerSideProps = async ({params}) => {
     return {
         props: {
             product,
-            products: getProducts(),
+            products: await fetchProducts(),
         },
     };
 };

@@ -58,7 +58,7 @@ const FooterWidget = (props) => {
                             title="EXTERNAL MOCKS"
                         >
                             <Ul className="widget-list">
-                                <Li><Link href="/payment/processing">Payment Gateway</Link></Li>
+                                <Li><Link href="/checkout">Checkout</Link></Li>
                                 <Li><Link href="/payment/success">Payment Success</Link></Li>
                                 <Li><Link href="/payment/failed">Payment Failure</Link></Li>
                             </Ul>

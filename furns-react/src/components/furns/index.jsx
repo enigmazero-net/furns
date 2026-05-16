@@ -1,8 +1,5 @@
 import Link from "next/link";
 import {
-    FlowList,
-    FlowNumber,
-    FurnsPanel,
     FurnsTable,
     FurnsTableWrap,
     MetricCard,
@@ -20,23 +17,7 @@ export const statusVariant = (status = "") => {
     return "success";
 };
 
-export const ServiceFlow = ({title = "Diagram Coverage", flows = []}) => (
-    <FurnsPanel>
-        <PanelTitle>{title}</PanelTitle>
-        <FlowList>
-            {flows.map((flow) => {
-                const [number, ...labelParts] = flow.split(" ");
-                const label = labelParts.join(" ");
-                return (
-                    <li key={flow}>
-                        <FlowNumber>{number}</FlowNumber>
-                        <span>{label}</span>
-                    </li>
-                );
-            })}
-        </FlowList>
-    </FurnsPanel>
-);
+export const ServiceFlow = () => null;
 
 export const Metrics = ({items}) => (
     <MetricGrid>

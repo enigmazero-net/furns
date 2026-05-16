@@ -5,9 +5,10 @@ import Layout from "@components/layout";
 import Input from "@components/ui/input";
 import Button from "@components/ui/button";
 import Breadcrumb from "@components/ui/breadcrumb";
+import {fetchProducts, normalizeAdminProduct} from "@services/api";
 import {Col, Container, Row} from "@bootstrap";
 import {ServiceFlow, statusVariant} from "@components/furns";
-import {adminProducts, serviceFlows} from "@data/furns";
+import {serviceFlows} from "@data/furns";
 import {
     ActionRow,
     FieldBlock,
@@ -21,7 +22,7 @@ import {
     StatusPill,
 } from "@components/furns/furns.style";
 
-const AdminProductsPage = () => (
+const AdminProductsPage = ({products}) => (
     <Layout>
         <Head>
             <title>{"Admin Products :: " + settings?.title}</title>
@@ -65,7 +66,7 @@ const AdminProductsPage = () => (
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {adminProducts.map((product) => (
+                                        {products.map((product) => (
                                             <tr key={product.id}>
                                                 <td>{product.name}</td>
                                                 <td>{product.category}</td>
@@ -93,5 +94,14 @@ const AdminProductsPage = () => (
     </Layout>
 );
 
-export default AdminProductsPage;
+export const getServerSideProps = async () => {
+    const products = await fetchProducts({limit: 100});
 
+    return {
+        props: {
+            products: products.map(normalizeAdminProduct),
+        },
+    };
+};
+
+export default AdminProductsPage;

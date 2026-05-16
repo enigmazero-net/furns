@@ -4,7 +4,7 @@ import Layout from "@components/layout";
 import ShopProductsFeed from "@components/shop";
 import EmptyProduct from "@components/ui/empty";
 import Breadcrumb from "@components/ui/breadcrumb";
-import {getProducts} from "@data/catalog";
+import {fetchProducts} from "@services/api";
 
 const SearchPage = ({products}) => {
     return (
@@ -35,7 +35,7 @@ export const getServerSideProps = async ({params, query}) => {
 
     return {
         props: {
-            products: getProducts({sort, search: param, limit: 20})
+            products: await fetchProducts({sort, search: param, limit: 20})
         }
     };
 };

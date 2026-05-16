@@ -1,10 +1,14 @@
 import Head from "next/head";
 import {useRouter} from "next/router";
+import {useEffect, useState} from "react";
+import cogoToast from "cogo-toast";
 import settings from "@data/settings";
 import Layout from "@components/layout";
 import Input from "@components/ui/input";
 import Button from "@components/ui/button";
 import Breadcrumb from "@components/ui/breadcrumb";
+import {updateAdminOrderStatus} from "@services/api";
+import {getAccessToken, loginWithKeycloak} from "@services/auth";
 import {Col, Container, Row} from "@bootstrap";
 import {ServiceFlow, statusVariant} from "@components/furns";
 import {getMockOrder, serviceFlows} from "@data/furns";
@@ -24,15 +28,56 @@ import {
 
 const AdminOrderDetailsPage = () => {
     const router = useRouter();
-    const order = getMockOrder(router.query.id);
+    const initialOrder = getMockOrder(router.query.id);
+    const [order, setOrder] = useState(initialOrder);
+    const [status, setStatus] = useState(initialOrder.status);
+    const [isSaving, setIsSaving] = useState(false);
+    const orderId = router.query.id || order.id;
+
+    useEffect(() => {
+        const nextOrder = getMockOrder(router.query.id);
+        setOrder(nextOrder);
+        setStatus(nextOrder.status);
+    }, [router.query.id]);
+
+    const onSaveHandler = async () => {
+        const token = getAccessToken();
+        if (!token) {
+            await loginWithKeycloak(`/admin/orders/${order.id}`);
+            return;
+        }
+
+        setIsSaving(true);
+
+        try {
+            await updateAdminOrderStatus(token, orderId, status);
+            setOrder((prevState) => ({
+                ...prevState,
+                status,
+            }));
+            cogoToast.success("Order status updated.", {
+                position: "top-right",
+                heading: "Saved",
+                hideAfter: 3,
+            });
+        } catch (error) {
+            cogoToast.error(error.message || "Order status update failed.", {
+                position: "top-right",
+                heading: "Save Failed",
+                hideAfter: 4,
+            });
+        } finally {
+            setIsSaving(false);
+        }
+    };
 
     return (
         <Layout>
             <Head>
-                <title>{`Admin ${order.id} :: ${settings?.title}`}</title>
+                <title>{`Admin ${orderId} :: ${settings?.title}`}</title>
             </Head>
 
-            <Breadcrumb py={[40, 80]} mb={[60, null, 100]} pageTitle={`Admin ${order.id}`}/>
+            <Breadcrumb py={[40, 80]} mb={[60, null, 100]} pageTitle={`Admin ${orderId}`}/>
 
             <PageContent>
                 <Container>
@@ -61,14 +106,27 @@ const AdminOrderDetailsPage = () => {
                                 </PanelSubtitle>
                                 <FormGrid>
                                     <FieldBlock>
-                                        <Input id="status" label="New Status" placeholder="Confirmed"/>
+                                        <Input
+                                            id="status"
+                                            label="New Status"
+                                            placeholder="Confirmed"
+                                            value={status}
+                                            onChange={(event) => setStatus(event.target.value)}
+                                        />
                                     </FieldBlock>
                                     <FieldBlock>
                                         <Input id="reason" label="Reason" placeholder="Payment authorized by mock gateway"/>
                                     </FieldBlock>
                                 </FormGrid>
                                 <ActionRow>
-                                    <Button tag="button" bg="primary" color="white" hvrBg="secondary">
+                                    <Button
+                                        tag="button"
+                                        bg="primary"
+                                        color="white"
+                                        hvrBg="secondary"
+                                        loading={isSaving}
+                                        onClick={onSaveHandler}
+                                    >
                                         Save Status
                                     </Button>
                                     <Button tag="a" href="/admin/audit-logs" bg="secondary" color="white" hvrBg="primary">
@@ -114,4 +172,3 @@ const AdminOrderDetailsPage = () => {
 };
 
 export default AdminOrderDetailsPage;
-

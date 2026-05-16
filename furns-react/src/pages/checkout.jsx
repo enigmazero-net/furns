@@ -1,10 +1,15 @@
 import Head from "next/head";
+import {useState} from "react";
+import {useRouter} from "next/router";
 import {useSelector} from "react-redux";
+import cogoToast from "cogo-toast";
 import settings from "@data/settings";
 import Layout from "@components/layout";
 import Input, {TextArea} from "@components/ui/input";
 import Button from "@components/ui/button";
 import Breadcrumb from "@components/ui/breadcrumb";
+import {createCheckout, createPayment} from "@services/api";
+import {getAccessToken, loginWithKeycloak, registerWithKeycloak} from "@services/auth";
 import {Col, Container, Row} from "@bootstrap";
 import {CURRENCY} from "@utils/constant";
 import {getCartTotalPrice} from "@utils/product";
@@ -31,13 +36,93 @@ const fallbackItems = [
 ];
 
 const CheckoutPage = () => {
+    const router = useRouter();
     const cart = useSelector((state) => state.shoppingCart);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [form, setForm] = useState({
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+        address: "",
+    });
     const cartItems = cart.length > 0 ? cart : fallbackItems;
     const subtotal = cart.length > 0
         ? getCartTotalPrice(cart)
         : fallbackItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
     const deliveryFee = 70;
     const total = subtotal + deliveryFee;
+
+    const onInputChange = (event) => {
+        const {name, value} = event.target;
+        setForm((prevState) => ({
+            ...prevState,
+            [name]: value,
+        }));
+    };
+
+    const onPlaceOrderHandler = async () => {
+        if (!cart.length) {
+            cogoToast.warn("Add products to your cart before checkout.", {
+                position: "top-right",
+                heading: "Cart Empty",
+                hideAfter: 3,
+            });
+            return;
+        }
+
+        const token = getAccessToken();
+        if (!token) {
+            cogoToast.warn("Please login or create an account before payment.", {
+                position: "top-right",
+                heading: "Login Required",
+                hideAfter: 3,
+            });
+            await loginWithKeycloak("/checkout");
+            return;
+        }
+
+        setIsSubmitting(true);
+
+        try {
+            const checkout = await createCheckout(token, {
+                items: cart.map((item) => ({
+                    product_id: item.id,
+                    quantity: item.quantity,
+                    variant_id: item.variations?.id,
+                })),
+                customer: {
+                    first_name: form.firstName,
+                    last_name: form.lastName,
+                    email: form.email,
+                    phone: form.phone,
+                },
+                shipping_address: form.address,
+                delivery_fee: deliveryFee,
+            });
+            const orderId = checkout?.id || checkout?.order_id || checkout?.order?.id;
+            const payment = await createPayment(token, {
+                order_id: orderId,
+                amount: total,
+                currency: "USD",
+            });
+            const checkoutUrl = payment?.checkout_url || payment?.checkoutUrl || payment?.url;
+
+            if (checkoutUrl) {
+                window.location.assign(checkoutUrl);
+            } else {
+                router.push("/payment/processing");
+            }
+        } catch (error) {
+            cogoToast.error(error.message || "Checkout failed.", {
+                position: "top-right",
+                heading: "Checkout Error",
+                hideAfter: 4,
+            });
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
 
     return (
         <Layout>
@@ -59,29 +144,29 @@ const CheckoutPage = () => {
 
                                 <FormGrid>
                                     <FieldBlock>
-                                        <Input id="first-name" label="First Name" placeholder="Furns"/>
+                                        <Input id="first-name" name="firstName" label="First Name" placeholder="Furns" value={form.firstName} onChange={onInputChange}/>
                                     </FieldBlock>
                                     <FieldBlock>
-                                        <Input id="last-name" label="Last Name" placeholder="Customer"/>
+                                        <Input id="last-name" name="lastName" label="Last Name" placeholder="Customer" value={form.lastName} onChange={onInputChange}/>
                                     </FieldBlock>
                                     <FieldBlock>
-                                        <Input id="email" type="email" label="Email" placeholder="customer@furns.local"/>
+                                        <Input id="email" name="email" type="email" label="Email" placeholder="customer@furns.local" value={form.email} onChange={onInputChange}/>
                                     </FieldBlock>
                                     <FieldBlock>
-                                        <Input id="phone" label="Phone" placeholder="+94 77 000 0000"/>
+                                        <Input id="phone" name="phone" label="Phone" placeholder="+94 77 000 0000" value={form.phone} onChange={onInputChange}/>
                                     </FieldBlock>
                                     <FullWidth>
                                         <FieldBlock>
-                                            <TextArea id="address" label="Shipping Address" rows={4} placeholder="42 Workshop Lane, Colombo"/>
+                                            <TextArea id="address" name="address" label="Shipping Address" rows={4} placeholder="42 Workshop Lane, Colombo" value={form.address} onChange={onInputChange}/>
                                         </FieldBlock>
                                     </FullWidth>
                                 </FormGrid>
                             </FurnsPanel>
 
                             <FurnsPanel>
-                                <PanelTitle>Mock Payment Gateway</PanelTitle>
+                                <PanelTitle>Payment</PanelTitle>
                                 <PanelSubtitle>
-                                    Card details are not collected here. The payment service will create an AcquireMock invoice and redirect the customer to the mock gateway.
+                                    Payment is available only after customer login. Create an account first if you do not already have one.
                                 </PanelSubtitle>
                                 <StepList>
                                     <li>Checkout Service creates a pending order.</li>
@@ -122,11 +207,24 @@ const CheckoutPage = () => {
                                     </FurnsTable>
                                 </FurnsTableWrap>
                                 <ActionRow>
-                                    <Button tag="a" href="/payment/processing" bg="primary" color="white" hvrBg="secondary">
+                                    <Button
+                                        tag="button"
+                                        bg="primary"
+                                        color="white"
+                                        hvrBg="secondary"
+                                        loading={isSubmitting}
+                                        onClick={onPlaceOrderHandler}
+                                    >
                                         Place Order / Pay Now
                                     </Button>
+                                    <Button tag="button" bg="secondary" color="white" hvrBg="primary" onClick={() => loginWithKeycloak("/checkout")}>
+                                        Login
+                                    </Button>
+                                    <Button tag="button" bg="secondary" color="white" hvrBg="primary" onClick={() => registerWithKeycloak("/checkout")}>
+                                        Sign Up
+                                    </Button>
                                 </ActionRow>
-                                <MutedText>Backend will replace this with invoice creation and gateway redirect.</MutedText>
+                                <MutedText>You must be signed in before an order or payment request is sent.</MutedText>
                             </FurnsPanel>
 
                             <ServiceFlow flows={[...serviceFlows.checkout, ...serviceFlows.payment]}/>

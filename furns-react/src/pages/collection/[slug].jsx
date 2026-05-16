@@ -4,7 +4,7 @@ import Layout from "@components/layout";
 import ShopProductsFeed from "@components/shop";
 import EmptyProduct from "@components/ui/empty";
 import Breadcrumb from "@components/ui/breadcrumb";
-import {getCollectionByHandle, getProducts} from "@data/catalog";
+import {fetchCollection} from "@services/api";
 
 const CollectionPage = ({collection}) => {
     return (
@@ -32,16 +32,10 @@ const CollectionPage = ({collection}) => {
 export const getServerSideProps = async ({params, query}) => {
     const {slug} = params;
     const {sort} = query;
-    const collection = getCollectionByHandle(slug);
 
     return {
         props: {
-            collection: {
-                title: collection?.title || slug,
-                products: getProducts({sort}).filter(({node}) => (
-                    node.collections.edges.some(({node: item}) => item?.handle === slug)
-                )),
-            },
+            collection: await fetchCollection(slug, {sort}),
         }
     };
 };

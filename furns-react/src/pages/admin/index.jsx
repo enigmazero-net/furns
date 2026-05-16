@@ -44,6 +44,9 @@ const AdminDashboardPage = () => (
                         <Button tag="a" href="/admin/products" bg="secondary" color="white" hvrBg="primary">
                             Manage Products
                         </Button>
+                        <Button tag="a" href="/admin/payments" bg="secondary" color="white" hvrBg="primary">
+                            View Payments
+                        </Button>
                         <Button tag="a" href="/admin/audit-logs" bg="primary" color="white" hvrBg="secondary">
                             View Audit Logs
                         </Button>
@@ -67,4 +70,3 @@ const AdminDashboardPage = () => (
 );
 
 export default AdminDashboardPage;
-
