@@ -33,6 +33,17 @@ const normalizeArray = (data) => {
     return [];
 };
 
+const errorMessage = (data, text, status) => {
+    if (typeof data?.detail === "string") return data.detail;
+    if (Array.isArray(data?.detail)) {
+        return data.detail
+            .map((item) => item?.msg || item?.message || JSON.stringify(item))
+            .join(", ");
+    }
+    if (typeof data?.message === "string") return data.message;
+    return text || `API request failed: ${status}`;
+};
+
 export const apiFetch = async (path, options = {}) => {
     const response = await fetch(`${API_BASE_URL}${path}`, {
         ...options,
@@ -53,7 +64,7 @@ export const apiFetch = async (path, options = {}) => {
     }
 
     if (!response.ok) {
-        throw new Error(data?.detail || data?.message || text || `API request failed: ${response.status}`);
+        throw new Error(errorMessage(data, text, response.status));
     }
 
     return data;
@@ -234,12 +245,60 @@ export const addCartItem = (token, product) => authApiFetch("/cart/items", token
     method: "POST",
     body: JSON.stringify({
         product_id: product.id,
-        quantity: product.quantity || 1,
-        variant_id: product.variations?.id,
+        quantity: Number(product.quantity || 1),
     }),
 });
 
 export const getCart = (token) => authApiFetch("/cart", token);
+
+export const updateCartItem = (token, cartItemId, quantity) => authApiFetch(`/cart/items/${encodeURIComponent(cartItemId)}`, token, {
+    method: "PATCH",
+    body: JSON.stringify({quantity: Number(quantity)}),
+});
+
+export const deleteCartItem = (token, cartItemId) => authApiFetch(`/cart/items/${encodeURIComponent(cartItemId)}`, token, {
+    method: "DELETE",
+});
+
+const getCartItemProductId = (item = {}) => item.product_id || item.productId || item.product?.id || item.id;
+const getCartItemId = (item = {}) => item.cart_item_id || item.cartItemId || item.id;
+
+export const syncCartItems = async (token, items = []) => {
+    if (!items.length) return null;
+
+    let serverItems = [];
+
+    try {
+        const cart = await getCart(token);
+        serverItems = normalizeArray(cart?.items || cart?.cart_items || cart);
+    } catch {
+        serverItems = [];
+    }
+
+    const localProductIds = new Set(items.map((item) => item.id));
+    const deleteRequests = serverItems
+        .filter((item) => !localProductIds.has(getCartItemProductId(item)))
+        .map((item) => getCartItemId(item))
+        .filter(Boolean)
+        .map((cartItemId) => deleteCartItem(token, cartItemId));
+
+    const requests = items
+        .map((item) => {
+            const quantity = Number(item.quantity || 1);
+            const serverItem = serverItems.find((candidate) => getCartItemProductId(candidate) === item.id);
+            const cartItemId = getCartItemId(serverItem);
+
+            if (cartItemId) {
+                const serverQuantity = Number(serverItem.quantity || 0);
+                return serverQuantity === quantity ? null : updateCartItem(token, cartItemId, quantity);
+            }
+
+            return addCartItem(token, item);
+        })
+        .filter(Boolean);
+
+    return Promise.all([...deleteRequests, ...requests]);
+};
 
 export const createCheckout = (token, payload) => authApiFetch("/checkout", token, {
     method: "POST",
@@ -252,7 +311,10 @@ export const createPayment = (token, payload) => authApiFetch("/payments/create"
 });
 
 export const getOrders = (token) => authApiFetch("/orders", token);
+export const getOrder = (token, id) => authApiFetch(`/orders/${encodeURIComponent(id)}`, token);
+export const getMe = (token) => authApiFetch("/me", token);
 export const getAdminOrders = (token) => authApiFetch("/admin/orders", token);
+export const getAdminOrder = (token, id) => authApiFetch(`/admin/orders/${encodeURIComponent(id)}`, token);
 export const getAdminPayments = (token) => authApiFetch("/admin/payments", token);
 export const getAdminAuditLogs = (token) => authApiFetch("/admin/audit-logs", token);
 
@@ -265,6 +327,23 @@ export const updateAdminProductStock = (token, id, stockQuantity) => authApiFetc
     method: "PATCH",
     body: JSON.stringify({stock_quantity: Number(stockQuantity)}),
 });
+
+const formatShippingAddress = (value) => {
+    if (!value) return "";
+    if (typeof value === "string") return value;
+
+    const parts = [
+        value.recipient_name || value.recipientName,
+        value.address_line1 || value.addressLine1,
+        value.address_line2 || value.addressLine2,
+        value.city,
+        value.province || value.state,
+        value.postal_code || value.postalCode,
+        value.country,
+    ];
+
+    return parts.filter(Boolean).join(", ");
+};
 
 export const normalizeOrder = (order = {}) => {
     const items = normalizeArray(order.items || order.order_items).map((item) => ({
@@ -283,20 +362,35 @@ export const normalizeOrder = (order = {}) => {
         gatewayReference: order.gatewayReference || order.gateway_reference || order.payment?.reference || "Pending",
         customer: order.customer || order.customer_name || order.user?.name || "Customer",
         email: order.email || order.user?.email || "",
-        shippingAddress: order.shippingAddress || order.shipping_address || order.address || "",
+        shippingAddress: formatShippingAddress(order.shippingDetails || order.shipping_details || order.shippingAddress || order.shipping_address || order.address),
         items,
     };
 };
 
 export const normalizePayment = (payment = {}) => ({
-    id: payment.id || payment.payment_id || payment.reference || "Payment",
+    id: payment.id || payment.payment_id || payment.transaction_id || payment.payment_transaction_id || payment.reference || "Payment",
     orderId: payment.order_id || payment.orderId || payment.order?.id || "",
     status: payment.status || "Pending",
     amount: Number(payment.amount || payment.total || 0),
     currency: payment.currency || "USD",
-    gatewayReference: payment.gateway_reference || payment.gatewayReference || payment.reference || "",
+    gatewayReference: payment.gateway_payment_reference || payment.gateway_reference || payment.gatewayReference || payment.gateway_transaction_id || payment.reference || "",
     createdAt: payment.created_at || payment.createdAt || "",
 });
+
+export const getPaymentRedirectUrl = (payment = {}) => (
+    payment.checkout_url ||
+    payment.checkoutUrl ||
+    payment.payment_url ||
+    payment.paymentUrl ||
+    payment.redirect_url ||
+    payment.redirectUrl ||
+    payment.gateway_url ||
+    payment.gatewayUrl ||
+    payment.invoice_url ||
+    payment.invoiceUrl ||
+    payment.invoice?.url ||
+    payment.url
+);
 
 export const normalizeAuditEvent = (event = {}) => ({
     time: event.time || event.created_at || event.createdAt || "",
@@ -305,6 +399,16 @@ export const normalizeAuditEvent = (event = {}) => ({
     target: event.target || event.entity || event.resource || "",
     result: event.result || event.message || event.status || "",
 });
+
+export const normalizeUser = (user = {}) => {
+    const roles = user.roles || user.realm_roles || user.realmRoles || [];
+
+    return {
+        name: user.name || user.full_name || user.preferred_username || user.username || "Furns User",
+        email: user.email || "",
+        role: Array.isArray(roles) && roles.length ? roles.join(", ") : (user.role || "Customer"),
+    };
+};
 
 export const normalizeAdminProduct = (product = {}) => {
     const normalized = product.node ? product.node : normalizeProduct(product);

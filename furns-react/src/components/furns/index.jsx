@@ -1,5 +1,8 @@
 import Link from "next/link";
 import {
+    FlowList,
+    FlowNumber,
+    FurnsPanel,
     FurnsTable,
     FurnsTableWrap,
     MetricCard,
@@ -17,7 +20,23 @@ export const statusVariant = (status = "") => {
     return "success";
 };
 
-export const ServiceFlow = () => null;
+export const ServiceFlow = ({flows = []}) => {
+    if (!flows.length) return null;
+
+    return (
+        <FurnsPanel>
+            <PanelTitle>Service Flow</PanelTitle>
+            <FlowList>
+                {flows.map((flow, index) => (
+                    <li key={`${flow}-${index}`}>
+                        <FlowNumber>{String(index + 1).padStart(2, "0")}</FlowNumber>
+                        <span>{flow}</span>
+                    </li>
+                ))}
+            </FlowList>
+        </FurnsPanel>
+    );
+};
 
 export const Metrics = ({items}) => (
     <MetricGrid>

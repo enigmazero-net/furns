@@ -8,7 +8,7 @@ import Layout from "@components/layout";
 import Input, {TextArea} from "@components/ui/input";
 import Button from "@components/ui/button";
 import Breadcrumb from "@components/ui/breadcrumb";
-import {createCheckout, createPayment} from "@services/api";
+import {createCheckout, createPayment, getPaymentRedirectUrl, syncCartItems} from "@services/api";
 import {getAccessToken, loginWithKeycloak, registerWithKeycloak} from "@services/auth";
 import {Col, Container, Row} from "@bootstrap";
 import {CURRENCY} from "@utils/constant";
@@ -30,27 +30,23 @@ import {
     StepList,
 } from "@components/furns/furns.style";
 
-const fallbackItems = [
-    {title: "Aurora Fabric Sofa", quantity: 1, price: 899},
-    {title: "Studio Computer Desk", quantity: 1, price: 359},
-];
-
 const CheckoutPage = () => {
     const router = useRouter();
     const cart = useSelector((state) => state.shoppingCart);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [form, setForm] = useState({
-        firstName: "",
-        lastName: "",
-        email: "",
+        recipientName: "",
         phone: "",
-        address: "",
+        addressLine1: "",
+        addressLine2: "",
+        city: "",
+        province: "",
+        postalCode: "",
+        country: "Sri Lanka",
     });
-    const cartItems = cart.length > 0 ? cart : fallbackItems;
-    const subtotal = cart.length > 0
-        ? getCartTotalPrice(cart)
-        : fallbackItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-    const deliveryFee = 70;
+    const cartItems = cart;
+    const subtotal = getCartTotalPrice(cart);
+    const deliveryFee = 0;
     const total = subtotal + deliveryFee;
 
     const onInputChange = (event) => {
@@ -71,6 +67,35 @@ const CheckoutPage = () => {
             return;
         }
 
+        const shippingDetails = {
+            recipient_name: form.recipientName.trim(),
+            phone: form.phone.trim(),
+            address_line1: form.addressLine1.trim(),
+            address_line2: form.addressLine2.trim(),
+            city: form.city.trim(),
+            province: form.province.trim(),
+            postal_code: form.postalCode.trim(),
+            country: form.country.trim() || "Sri Lanka",
+        };
+        const missingRequiredFields = [
+            shippingDetails.recipient_name,
+            shippingDetails.phone,
+            shippingDetails.address_line1,
+            shippingDetails.city,
+            shippingDetails.province,
+            shippingDetails.postal_code,
+            shippingDetails.country,
+        ].some((value) => !value);
+
+        if (missingRequiredFields) {
+            cogoToast.warn("Complete the required shipping details before checkout.", {
+                position: "top-right",
+                heading: "Shipping Required",
+                hideAfter: 3,
+            });
+            return;
+        }
+
         const token = getAccessToken();
         if (!token) {
             cogoToast.warn("Please login or create an account before payment.", {
@@ -85,28 +110,19 @@ const CheckoutPage = () => {
         setIsSubmitting(true);
 
         try {
+            await syncCartItems(token, cart);
             const checkout = await createCheckout(token, {
-                items: cart.map((item) => ({
-                    product_id: item.id,
-                    quantity: item.quantity,
-                    variant_id: item.variations?.id,
-                })),
-                customer: {
-                    first_name: form.firstName,
-                    last_name: form.lastName,
-                    email: form.email,
-                    phone: form.phone,
-                },
-                shipping_address: form.address,
-                delivery_fee: deliveryFee,
+                shipping_details: shippingDetails,
             });
             const orderId = checkout?.id || checkout?.order_id || checkout?.order?.id;
+            if (!orderId) {
+                throw new Error("Checkout did not return an order ID.");
+            }
+
             const payment = await createPayment(token, {
                 order_id: orderId,
-                amount: total,
-                currency: "USD",
             });
-            const checkoutUrl = payment?.checkout_url || payment?.checkoutUrl || payment?.url;
+            const checkoutUrl = getPaymentRedirectUrl(payment);
 
             if (checkoutUrl) {
                 window.location.assign(checkoutUrl);
@@ -144,20 +160,31 @@ const CheckoutPage = () => {
 
                                 <FormGrid>
                                     <FieldBlock>
-                                        <Input id="first-name" name="firstName" label="First Name" placeholder="Furns" value={form.firstName} onChange={onInputChange}/>
+                                        <Input id="recipient-name" name="recipientName" label="Recipient Name" placeholder="Test Customer" value={form.recipientName} onChange={onInputChange}/>
                                     </FieldBlock>
                                     <FieldBlock>
-                                        <Input id="last-name" name="lastName" label="Last Name" placeholder="Customer" value={form.lastName} onChange={onInputChange}/>
+                                        <Input id="phone" name="phone" label="Phone" placeholder="+94770000000" value={form.phone} onChange={onInputChange}/>
                                     </FieldBlock>
                                     <FieldBlock>
-                                        <Input id="email" name="email" type="email" label="Email" placeholder="customer@furns.local" value={form.email} onChange={onInputChange}/>
+                                        <Input id="city" name="city" label="City" placeholder="Colombo" value={form.city} onChange={onInputChange}/>
                                     </FieldBlock>
                                     <FieldBlock>
-                                        <Input id="phone" name="phone" label="Phone" placeholder="+94 77 000 0000" value={form.phone} onChange={onInputChange}/>
+                                        <Input id="province" name="province" label="Province" placeholder="Western" value={form.province} onChange={onInputChange}/>
+                                    </FieldBlock>
+                                    <FieldBlock>
+                                        <Input id="postal-code" name="postalCode" label="Postal Code" placeholder="00100" value={form.postalCode} onChange={onInputChange}/>
+                                    </FieldBlock>
+                                    <FieldBlock>
+                                        <Input id="country" name="country" label="Country" placeholder="Sri Lanka" value={form.country} onChange={onInputChange}/>
                                     </FieldBlock>
                                     <FullWidth>
                                         <FieldBlock>
-                                            <TextArea id="address" name="address" label="Shipping Address" rows={4} placeholder="42 Workshop Lane, Colombo" value={form.address} onChange={onInputChange}/>
+                                            <TextArea id="address-line1" name="addressLine1" label="Address Line 1" rows={3} placeholder="No. 123, Test Street" value={form.addressLine1} onChange={onInputChange}/>
+                                        </FieldBlock>
+                                    </FullWidth>
+                                    <FullWidth>
+                                        <FieldBlock>
+                                            <TextArea id="address-line2" name="addressLine2" label="Address Line 2" rows={2} placeholder="Apartment 4" value={form.addressLine2} onChange={onInputChange}/>
                                         </FieldBlock>
                                     </FullWidth>
                                 </FormGrid>
@@ -189,12 +216,18 @@ const CheckoutPage = () => {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {cartItems.map((item) => (
-                                                <tr key={item.cartId || item.title}>
-                                                    <td>{item.title} x {item.quantity}</td>
-                                                    <td>{CURRENCY}{Number((item.price || item.variations?.priceV2?.amount || 0) * item.quantity).toFixed(2)}</td>
+                                            {cartItems.length ? (
+                                                cartItems.map((item) => (
+                                                    <tr key={item.cartId || item.title}>
+                                                        <td>{item.title} x {item.quantity}</td>
+                                                        <td>{CURRENCY}{Number((item.price || item.variations?.priceV2?.amount || 0) * item.quantity).toFixed(2)}</td>
+                                                    </tr>
+                                                ))
+                                            ) : (
+                                                <tr>
+                                                    <td colSpan={2}>Your cart is empty.</td>
                                                 </tr>
-                                            ))}
+                                            )}
                                             <tr>
                                                 <td>Delivery</td>
                                                 <td>{CURRENCY}{deliveryFee.toFixed(2)}</td>

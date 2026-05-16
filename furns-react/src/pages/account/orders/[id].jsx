@@ -1,8 +1,11 @@
 import Head from "next/head";
 import {useRouter} from "next/router";
+import {useEffect, useState} from "react";
 import settings from "@data/settings";
 import Layout from "@components/layout";
 import Breadcrumb from "@components/ui/breadcrumb";
+import {getOrder, normalizeOrder} from "@services/api";
+import {getAccessToken} from "@services/auth";
 import {Col, Container, Row} from "@bootstrap";
 import {ServiceFlow, statusVariant} from "@components/furns";
 import {getMockOrder, serviceFlows} from "@data/furns";
@@ -19,7 +22,21 @@ import {
 
 const OrderDetailsPage = () => {
     const router = useRouter();
-    const order = getMockOrder(router.query.id);
+    const [order, setOrder] = useState(getMockOrder(router.query.id));
+
+    useEffect(() => {
+        if (!router.isReady) return;
+
+        const nextOrder = getMockOrder(router.query.id);
+        setOrder(nextOrder);
+
+        const token = getAccessToken();
+        if (!token) return;
+
+        getOrder(token, router.query.id)
+            .then((data) => setOrder(normalizeOrder(data)))
+            .catch(() => {});
+    }, [router.isReady, router.query.id]);
 
     return (
         <Layout>
@@ -89,4 +106,3 @@ const OrderDetailsPage = () => {
 };
 
 export default OrderDetailsPage;
-

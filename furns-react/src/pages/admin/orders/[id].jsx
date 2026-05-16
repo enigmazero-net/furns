@@ -7,7 +7,7 @@ import Layout from "@components/layout";
 import Input from "@components/ui/input";
 import Button from "@components/ui/button";
 import Breadcrumb from "@components/ui/breadcrumb";
-import {updateAdminOrderStatus} from "@services/api";
+import {getAdminOrder, normalizeOrder, updateAdminOrderStatus} from "@services/api";
 import {getAccessToken, loginWithKeycloak} from "@services/auth";
 import {Col, Container, Row} from "@bootstrap";
 import {ServiceFlow, statusVariant} from "@components/furns";
@@ -35,15 +35,28 @@ const AdminOrderDetailsPage = () => {
     const orderId = router.query.id || order.id;
 
     useEffect(() => {
+        if (!router.isReady) return;
+
         const nextOrder = getMockOrder(router.query.id);
         setOrder(nextOrder);
         setStatus(nextOrder.status);
-    }, [router.query.id]);
+
+        const token = getAccessToken();
+        if (!token) return;
+
+        getAdminOrder(token, router.query.id)
+            .then((data) => {
+                const apiOrder = normalizeOrder(data);
+                setOrder(apiOrder);
+                setStatus(apiOrder.status);
+            })
+            .catch(() => {});
+    }, [router.isReady, router.query.id]);
 
     const onSaveHandler = async () => {
         const token = getAccessToken();
         if (!token) {
-            await loginWithKeycloak(`/admin/orders/${order.id}`);
+            await loginWithKeycloak(`/admin/orders/${orderId}`);
             return;
         }
 
@@ -102,7 +115,7 @@ const AdminOrderDetailsPage = () => {
                             <FurnsPanel>
                                 <PanelTitle>Update Status</PanelTitle>
                                 <PanelSubtitle>
-                                    Status updates will write an administrative audit event before the backend is connected.
+                                    Status updates go through the protected admin API and are recorded by the backend.
                                 </PanelSubtitle>
                                 <FormGrid>
                                     <FieldBlock>
