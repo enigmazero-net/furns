@@ -1,15 +1,25 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Furns React App
 
-## Getting Started
+This folder contains the Next.js frontend for the Furns online store.
 
-First, run the development server:
+Use the repository root README for full documentation:
+
+```text
+../README.md
+```
+
+Common commands from the repository root:
 
 ```bash
 npm run dev
-# or
-yarn dev
+npm run build
+npm run start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Common commands from this folder:
 
-You can start editing the page by modifying `pages/home-1.jsx`. The page auto-updates as you edit the file.
+```bash
+npm run dev
+npm run build
+npm run start
+```
