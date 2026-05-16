@@ -8,11 +8,6 @@ import Select from "@components/ui/select";
 import Button from "@components/ui/button";
 import {excerpt, toCapitalize} from "@utils/method";
 import {
-    IoLogoTwitter,
-    IoLogoLinkedin,
-    IoLogoFacebook
-} from "react-icons/io";
-import {
     ProductSKU,
     ContentWrap,
     ProductName,
@@ -20,7 +15,6 @@ import {
     ProductRatings,
     ProductSwatches,
     ProductSwatchItem,
-    ProductSocialShare,
     ProductActionButton,
     QuantityIncDecButton
 } from "@components/product/details/details.style";
@@ -183,21 +177,6 @@ const ProductDetailsContent = ({product, ...props}) => {
                 </div>
 
             </ProductActionButton>
-
-            <ProductSocialShare>
-                <h4>Share:</h4>
-                <div className="media">
-                    <a href="https://facebook.com" target="_blank" rel="noopener">
-                        <IoLogoFacebook/>
-                    </a>
-                    <a href="https://facebook.com" target="_blank" rel="noopener">
-                        <IoLogoTwitter/>
-                    </a>
-                    <a href="https://facebook.com" target="_blank" rel="noopener">
-                        <IoLogoLinkedin/>
-                    </a>
-                </div>
-            </ProductSocialShare>
         </ContentWrap>
     );
 };

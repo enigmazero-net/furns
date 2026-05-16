@@ -13,7 +13,6 @@ import {
     BlogPostFooterItem,
     PostDetailsContentWrapper
 } from "@components/blog/details/post.details.style";
-import {FaFacebook, FaTwitter, FaPinterest} from "react-icons/fa";
 import {PostMeta, PostTitle} from "@components/blog/post/post.style";
 
 const PostDetailsContent = ({post}) => {
@@ -57,15 +56,6 @@ const PostDetailsContent = ({post}) => {
                                         {tags?.map(tag => (
                                             <li key={tag}><Link href={`/blog/${handle}`}>{tag}</Link></li>
                                         ))}
-                                    </BlogList>
-                                </BlogPostFooterItem>
-
-                                <BlogPostFooterItem>
-                                    <span>Share: </span>
-                                    <BlogList share={true}>
-                                        <li><a href="https://facebook.com" target="_blank" rel="noopener"><FaFacebook/></a></li>
-                                        <li><a href="https://twitter.com" target="_blank" rel="noopener"><FaTwitter/></a></li>
-                                        <li><a href="https://pinterest.com" target="_blank" rel="noopener"><FaPinterest/></a></li>
                                     </BlogList>
                                 </BlogPostFooterItem>
                             </BlogPostFooter>

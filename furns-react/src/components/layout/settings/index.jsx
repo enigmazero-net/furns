@@ -1,11 +1,8 @@
+import Link from "next/link";
 import Logo from "@components/ui/logo";
-import Select from "@components/ui/select";
-import settings from "@data/settings";
 import OffCanvas from "@components/ui/offCanvas";
 import {OffCanvasCloseBtn, OffCanvasHead} from "@components/ui/offCanvas/style";
 import {SettingsWrap, SettingsItem, SettingsFooter} from "@components/layout/settings/settings.style";
-import {IoIosHeart} from "react-icons/io";
-import {BiSupport} from "react-icons/bi";
 
 const SettingsSidebar = ({isOpen, onHandler}) => {
     return (
@@ -20,28 +17,28 @@ const SettingsSidebar = ({isOpen, onHandler}) => {
 
             <SettingsWrap>
                 <SettingsItem>
-                    <Select
-                        label="Language"
-                        options={settings.languages}
-                    />
+                    <Link href="/login">Customer Login</Link>
                 </SettingsItem>
 
                 <SettingsItem>
-                    <Select
-                        label="Currency"
-                        options={settings.currencies}
-                    />
+                    <Link href="/checkout">Checkout</Link>
+                </SettingsItem>
+
+                <SettingsItem>
+                    <Link href="/account/orders">Order History</Link>
+                </SettingsItem>
+
+                <SettingsItem>
+                    <Link href="/admin">Admin Dashboard</Link>
+                </SettingsItem>
+
+                <SettingsItem>
+                    <Link href="/admin/audit-logs">Audit Logs</Link>
                 </SettingsItem>
             </SettingsWrap>
 
             <SettingsFooter>
-                <div className="support">
-                    <BiSupport/>
-                    <a href="tel:+882836272324">+882836272324</a>
-                </div>
-                <p>
-                    © 2021, Furns. Made With <IoIosHeart/> by <a href="https://hasthemes.com/" target="_blank" rel="noreferrer noopener"> HasThemes.</a>
-                </p>
+                <p>Furns local workflow navigation.</p>
             </SettingsFooter>
         </OffCanvas>
     );

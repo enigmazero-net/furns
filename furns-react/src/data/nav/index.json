@@ -5,13 +5,8 @@
     "mega_menu": false
   },
   {
-    "text": "About",
-    "link": "/about",
-    "mega_menu": false
-  },
-  {
-    "text": "Home Furniture",
-    "link": "/",
+    "text": "Shop",
+    "link": "/shop",
     "submenu": [
       {
         "list": [
@@ -37,16 +32,70 @@
     "mega_menu": false
   },
   {
-    "text": "Office",
-    "link": "/collection/office",
+    "text": "Checkout",
+    "link": "/checkout",
     "mega_menu": false
   },
   {
-    "text": "Storage",
-    "link": "/",
+    "text": "Account",
+    "link": "/account",
     "submenu": [
       {
         "list": [
+          {
+            "text": "Login",
+            "link": "/login"
+          },
+          {
+            "text": "Register",
+            "link": "/register"
+          },
+          {
+            "text": "Order History",
+            "link": "/account/orders"
+          }
+        ]
+      }
+    ],
+    "mega_menu": false
+  },
+  {
+    "text": "Admin",
+    "link": "/admin",
+    "submenu": [
+      {
+        "list": [
+          {
+            "text": "Admin Login",
+            "link": "/admin/login"
+          },
+          {
+            "text": "Orders",
+            "link": "/admin/orders"
+          },
+          {
+            "text": "Products",
+            "link": "/admin/products"
+          },
+          {
+            "text": "Audit Logs",
+            "link": "/admin/audit-logs"
+          }
+        ]
+      }
+    ],
+    "mega_menu": false
+  },
+  {
+    "text": "More",
+    "link": "/collection/office",
+    "submenu": [
+      {
+        "list": [
+          {
+            "text": "Office",
+            "link": "/collection/office"
+          },
           {
             "text": "Laundry",
             "link": "/collection/laundry"
@@ -62,11 +111,6 @@
         ]
       }
     ],
-    "mega_menu": false
-  },
-  {
-    "text": "Contact",
-    "link": "/contact",
     "mega_menu": false
   }
 ]

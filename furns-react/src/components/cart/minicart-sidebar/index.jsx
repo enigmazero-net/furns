@@ -38,11 +38,11 @@ const MiniCartSidebar = ({isOpen, onHandler}) => {
                     bg="primary"
                     color="white"
                     hvrColor="white"
-                    href="/cart"
+                    href="/checkout"
                     hvrBg="secondary"
                     fontWeight="subHeading"
                 >
-                    View Cart
+                    Checkout
                     <TotalPrice>
                         {CURRENCY + cartTotalPrice.toFixed(2)}
                     </TotalPrice>

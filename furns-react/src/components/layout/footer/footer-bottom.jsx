@@ -1,5 +1,4 @@
 import Image from "next/image";
-import {IoIosHeart} from "react-icons/io";
 import {Container, Col, Row} from "@bootstrap";
 import {CopyrightText, FooterBottomWrapper} from "./footer.style";
 
@@ -25,7 +24,7 @@ const FooterBottom = ({bg}) => {
 
                     <Col md={6} className="text-center text-md-left">
                         <CopyrightText>
-                            © 2021, Furns. Made With <IoIosHeart/> by <a className="company-name" href="https://hasthemes.com/"> HasThemes.</a>
+                            © 2026 Furns. Local security and checkout workflow exercise.
                         </CopyrightText>
                     </Col>
                 </Row>

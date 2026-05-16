@@ -88,7 +88,22 @@ const HeaderBottom = ({
                   className={isDropdownOpen ? "show" : "hide"}
                 >
                   <li>
+                    <Link href="/login">Login</Link>
+                  </li>
+                  <li>
+                    <Link href="/register">Register</Link>
+                  </li>
+                  <li>
+                    <Link href="/account">Account</Link>
+                  </li>
+                  <li>
+                    <Link href="/account/orders">Orders</Link>
+                  </li>
+                  <li>
                     <Link href="/cart">Cart</Link>
+                  </li>
+                  <li>
+                    <Link href="/admin">Admin</Link>
                   </li>
                 </DropdownMenu>
               </ActionItem>

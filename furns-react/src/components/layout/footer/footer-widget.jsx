@@ -1,9 +1,7 @@
 import Link from "next/link";
 import Widget from "@components/ui/widget";
-import NewsletterForm from "@components/newsletter";
 import {Container, Col, Row, Ul, Li,} from "@bootstrap";
-import {WidgetWrapper, SocialIcons} from "./footer.style";
-import {SiFacebook, SiTwitter, SiLinkedin, SiPinterest, SiYoutube} from "react-icons/si";
+import {WidgetWrapper} from "./footer.style";
 
 const FooterWidget = (props) => {
 
@@ -16,67 +14,54 @@ const FooterWidget = (props) => {
                 <Row>
                     <Col md={6} lg={4}>
                         <Widget
-                            title="ABOUT US"
+                            title="FURNS STOREFRONT"
                             mb={[30, null, null, 0]}
                         >
                             <p className="about-text">
-                                Lorem ipsum dolor sit amet cons adipisicing elit sed do eiusm
-                                tempor incididunt ut labor et dolore magna aliqua. Ut enim ad minim veniam, quis
-                                nostrud.
+                                Furns is configured as a security storefront with customer checkout,
+                                mock payment, admin management, and audit-log screens.
                             </p>
-
-                            <SocialIcons mt={15}>
-                                <Li inline={true}>
-                                    <a href="https://facebook.com" target="_blank" rel="noopener"><SiFacebook/></a>
-                                </Li>
-                                <Li inline={true}>
-                                    <a href="https://twitter.com" target="_blank" rel="noopener"><SiTwitter/></a>
-                                </Li>
-                                <Li inline={true}>
-                                    <a href="https://linkedin.com" target="_blank" rel="noopener"><SiLinkedin/></a>
-                                </Li>
-                                <Li inline={true}>
-                                    <a href="https://youtube.com" target="_blank" rel="noopener"><SiYoutube/></a>
-                                </Li>
-                                <Li inline={true}>
-                                    <a href="https://pinterest.com" target="_blank" rel="noopener"><SiPinterest/></a>
-                                </Li>
-                            </SocialIcons>
                         </Widget>
                     </Col>
 
                     <Col sm={6} lg={3}>
                         <Widget
-                            title="INFORMATION"
+                            title="CUSTOMER FLOW"
                             mb={[30, null, null, 0]}
                         >
                             <Ul className="widget-list">
-                                <Li><Link href="/">About Us</Link></Li>
-                                <Li><Link href="/">Manufactures</Link></Li>
-                                <Li><Link href="/">Tracking Order</Link></Li>
-                                <Li><Link href="/">Privacy & Policy</Link></Li>
-                                <Li><Link href="/">Terms & Conditions</Link></Li>
+                                <Li><Link href="/login">Login</Link></Li>
+                                <Li><Link href="/register">Register</Link></Li>
+                                <Li><Link href="/cart">Cart</Link></Li>
+                                <Li><Link href="/checkout">Checkout</Link></Li>
+                                <Li><Link href="/account/orders">Order History</Link></Li>
                             </Ul>
                         </Widget>
                     </Col>
 
                     <Col sm={6} lg={2}>
                         <Widget
-                            title="MY ACCOUNT"
+                            title="ADMIN"
                             mb={[30, null, null, 0]}
                         >
                             <Ul className="widget-list">
-                                <Li><Link href="/cart">Cart</Link></Li>
-                                <Li><Link href="/cart">My Cart</Link></Li>
+                                <Li><Link href="/admin/login">Admin Login</Link></Li>
+                                <Li><Link href="/admin/orders">Orders</Link></Li>
+                                <Li><Link href="/admin/products">Products</Link></Li>
+                                <Li><Link href="/admin/audit-logs">Audit Logs</Link></Li>
                             </Ul>
                         </Widget>
                     </Col>
 
                     <Col sm={6} lg={3}>
                         <Widget
-                            title="NEWSLETTER"
+                            title="EXTERNAL MOCKS"
                         >
-                            <NewsletterForm/>
+                            <Ul className="widget-list">
+                                <Li><Link href="/payment/processing">Payment Gateway</Link></Li>
+                                <Li><Link href="/payment/success">Payment Success</Link></Li>
+                                <Li><Link href="/payment/failed">Payment Failure</Link></Li>
+                            </Ul>
                         </Widget>
                     </Col>
                 </Row>

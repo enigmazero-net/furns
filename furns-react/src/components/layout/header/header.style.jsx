@@ -96,8 +96,18 @@ export const HeaderBottomWrap = styled.div`
 export const HeaderTopSetLanCurr = styled.div`
   display: flex;
   flex-wrap: wrap;
+  gap: 20px;
   justify-content: flex-end;
   font-family: ${themeGet('fonts.heading')};
+
+  a {
+    color: ${themeGet("colors.white")};
+    font-size: 13px;
+
+    &:hover {
+      color: ${themeGet("colors.primary")};
+    }
+  }
 
   ${devices.sm} {
     justify-content: center;

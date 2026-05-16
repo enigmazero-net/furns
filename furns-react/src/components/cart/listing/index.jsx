@@ -21,10 +21,6 @@ const CartList = (props) => {
     const cart = useSelector((state) => state.shoppingCart);
     const totalProductsPrice = getCartTotalPrice(cart);
 
-    const onCheckoutHandler = () => {
-        dispatch(clearCartAction());
-    };
-
     return (
         <CartProductsList {...props}>
             <Container>
@@ -77,14 +73,14 @@ const CartList = (props) => {
                                 </Button>
 
                                 <Button
-                                    tag="button"
+                                    tag="a"
+                                    href="/checkout"
                                     bg="secondary"
                                     fontSize={13}
                                     color="white"
                                     hvrBg="primary"
                                     hvrColor="white"
                                     borderRadius="sm"
-                                    onClick={() => onCheckoutHandler()}
                                     className="btn-checkout mt-3 mt-sm-0"
                                 >
                                     PROCEED TO CHECKOUT

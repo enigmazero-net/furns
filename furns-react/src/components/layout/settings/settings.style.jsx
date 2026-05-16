@@ -43,6 +43,15 @@ export const SettingsItem = styled.div`
     margin-bottom: 25px;
   }
 
+  a {
+    color: ${themeGet('colors.heading')};
+    font-weight: ${themeGet('fontWeights.subHeading')};
+
+    &:hover {
+      color: ${themeGet('colors.primary')};
+    }
+  }
+
   label {
     font-size: 15px;
     font-weight: ${themeGet('fontWeights.subHeading')};

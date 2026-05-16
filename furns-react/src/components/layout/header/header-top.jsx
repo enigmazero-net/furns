@@ -1,8 +1,7 @@
 import cn from "classnames";
 import Link from "next/link";
 import PropTypes from "prop-types";
-import Dropdown from "@components/ui/dropdown";
-import {Col, Container, DropdownItem, Row} from "@bootstrap";
+import {Col, Container, Row} from "@bootstrap";
 import {HeaderTopWrap, HeaderTopMessage, HeaderTopSetLanCurr} from "@components/layout/header/header.style";
 
 const HeaderTop = ({className}) => {
@@ -12,25 +11,14 @@ const HeaderTop = ({className}) => {
                 <Row>
                     <Col md={5} lg={3} className="text-center text-md-left">
                         <HeaderTopMessage>
-                            Default Welcome Message
+                            Furns security storefront
                         </HeaderTopMessage>
                     </Col>
 
                     <Col md={7} lg={9}>
                         <HeaderTopSetLanCurr className="mt-2 mt-md-0">
-                            <Dropdown heading="English" align="left">
-                                <DropdownItem tag="li"><Link href="/">English</Link></DropdownItem>
-                                <DropdownItem tag="li"><Link href="/">Italiano</Link></DropdownItem>
-                                <DropdownItem tag="li"><Link href="/">Français</Link></DropdownItem>
-                                <DropdownItem tag="li"><Link href="/">Filipino</Link></DropdownItem>
-                            </Dropdown>
-
-                            <Dropdown heading="USD" align="left">
-                                <DropdownItem tag="li"><Link href="/">$ - USD</Link></DropdownItem>
-                                <DropdownItem tag="li"><Link href="/">€ - EUR</Link></DropdownItem>
-                                <DropdownItem tag="li"><Link href="/">£ - POUND </Link></DropdownItem>
-                                <DropdownItem tag="li"><Link href="/">₣ - FRANC</Link></DropdownItem>
-                            </Dropdown>
+                            <Link href="/payment/processing">Mock Payment Gateway</Link>
+                            <Link href="/admin/audit-logs">Audit Logs</Link>
                         </HeaderTopSetLanCurr>
                     </Col>
                 </Row>
