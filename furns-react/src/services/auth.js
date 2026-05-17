@@ -128,11 +128,17 @@ export const getAccessToken = () => {
 
     try {
         const auth = JSON.parse(window.localStorage.getItem(AUTH_STORAGE_KEY) || "null");
+        if (auth?.expires_at && Number(auth.expires_at) <= Date.now()) {
+            clearAuthState();
+            return null;
+        }
         return auth?.access_token || null;
     } catch {
         return null;
     }
 };
+
+export const isSignedIn = () => Boolean(getAccessToken());
 
 export const getAuthState = () => {
     if (!isBrowser()) return null;

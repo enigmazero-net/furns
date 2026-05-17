@@ -1,10 +1,18 @@
 import Link from "next/link";
+import {useEffect, useState} from "react";
 import Logo from "@components/ui/logo";
 import OffCanvas from "@components/ui/offCanvas";
+import {isSignedIn} from "@services/auth";
 import {OffCanvasCloseBtn, OffCanvasHead} from "@components/ui/offCanvas/style";
 import {SettingsWrap, SettingsItem, SettingsFooter} from "@components/layout/settings/settings.style";
 
 const SettingsSidebar = ({isOpen, onHandler}) => {
+    const [signedIn, setSignedIn] = useState(null);
+
+    useEffect(() => {
+        setSignedIn(isSignedIn());
+    }, []);
+
     return (
         <OffCanvas onHandler={onHandler} open={isOpen}>
             <OffCanvasHead>
@@ -16,9 +24,11 @@ const SettingsSidebar = ({isOpen, onHandler}) => {
             </OffCanvasHead>
 
             <SettingsWrap>
-                <SettingsItem>
-                    <Link href="/login">Customer Login</Link>
-                </SettingsItem>
+                {signedIn === false && (
+                    <SettingsItem>
+                        <Link href="/login">Customer Login</Link>
+                    </SettingsItem>
+                )}
 
                 <SettingsItem>
                     <Link href="/checkout">Checkout</Link>

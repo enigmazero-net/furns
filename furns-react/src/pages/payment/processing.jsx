@@ -19,7 +19,7 @@ import {
 } from "@components/furns/furns.style";
 
 const PaymentProcessingPage = () => {
-    const [hasToken, setHasToken] = useState(false);
+    const [hasToken, setHasToken] = useState(null);
 
     useEffect(() => {
         setHasToken(Boolean(getAccessToken()));
@@ -38,13 +38,21 @@ const PaymentProcessingPage = () => {
                     <Row>
                         <Col lg={7}>
                             <FurnsPanel>
-                                <PanelTitle>{hasToken ? "Redirecting To Mock Gateway" : "Login Required"}</PanelTitle>
+                                <PanelTitle>
+                                    {hasToken === null
+                                        ? "Checking Session"
+                                        : hasToken
+                                            ? "Redirecting To Mock Gateway"
+                                            : "Login Required"}
+                                </PanelTitle>
                                 <PanelSubtitle>
-                                    {hasToken
-                                        ? "The payment service will create an AcquireMock invoice and redirect you to the mock gateway."
-                                        : "You must login before making a payment. Create an account first if you do not already have one."}
+                                    {hasToken === null
+                                        ? "Checking your customer session before payment."
+                                        : hasToken
+                                            ? "The payment service will create an AcquireMock invoice and redirect you to the mock gateway."
+                                            : "You must login before making a payment. Create an account first if you do not already have one."}
                                 </PanelSubtitle>
-                                {hasToken ? (
+                                {hasToken === true ? (
                                     <>
                                         <StepList>
                                             <li>Payment Processing Service creates an AcquireMock invoice.</li>
@@ -61,7 +69,7 @@ const PaymentProcessingPage = () => {
                                         </ActionRow>
                                         <MutedText>No card fields are stored in the frontend.</MutedText>
                                     </>
-                                ) : (
+                                ) : hasToken === false ? (
                                     <ActionRow>
                                         <Button tag="button" bg="primary" color="white" hvrBg="secondary" onClick={() => loginWithKeycloak("/payment/processing")}>
                                             Login
@@ -70,7 +78,7 @@ const PaymentProcessingPage = () => {
                                             Sign Up
                                         </Button>
                                     </ActionRow>
-                                )}
+                                ) : null}
                             </FurnsPanel>
                         </Col>
                         <Col lg={5}>

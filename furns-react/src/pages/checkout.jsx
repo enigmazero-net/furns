@@ -1,5 +1,5 @@
 import Head from "next/head";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import {useSelector} from "react-redux";
 import cogoToast from "cogo-toast";
@@ -9,7 +9,7 @@ import Input, {TextArea} from "@components/ui/input";
 import Button from "@components/ui/button";
 import Breadcrumb from "@components/ui/breadcrumb";
 import {createCheckout, createPayment, getPaymentRedirectUrl, syncCartItems} from "@services/api";
-import {getAccessToken, loginWithKeycloak, registerWithKeycloak} from "@services/auth";
+import {getAccessToken, isSignedIn, loginWithKeycloak, registerWithKeycloak} from "@services/auth";
 import {Col, Container, Row} from "@bootstrap";
 import {CURRENCY} from "@utils/constant";
 import {getCartTotalPrice} from "@utils/product";
@@ -34,6 +34,7 @@ const CheckoutPage = () => {
     const router = useRouter();
     const cart = useSelector((state) => state.shoppingCart);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [signedIn, setSignedIn] = useState(null);
     const [form, setForm] = useState({
         recipientName: "",
         phone: "",
@@ -48,6 +49,10 @@ const CheckoutPage = () => {
     const subtotal = getCartTotalPrice(cart);
     const deliveryFee = 0;
     const total = subtotal + deliveryFee;
+
+    useEffect(() => {
+        setSignedIn(isSignedIn());
+    }, []);
 
     const onInputChange = (event) => {
         const {name, value} = event.target;
@@ -250,14 +255,20 @@ const CheckoutPage = () => {
                                     >
                                         Place Order / Pay Now
                                     </Button>
-                                    <Button tag="button" bg="secondary" color="white" hvrBg="primary" onClick={() => loginWithKeycloak("/checkout")}>
-                                        Login
-                                    </Button>
-                                    <Button tag="button" bg="secondary" color="white" hvrBg="primary" onClick={() => registerWithKeycloak("/checkout")}>
-                                        Sign Up
-                                    </Button>
+                                    {signedIn === false && (
+                                        <>
+                                            <Button tag="button" bg="secondary" color="white" hvrBg="primary" onClick={() => loginWithKeycloak("/checkout")}>
+                                                Login
+                                            </Button>
+                                            <Button tag="button" bg="secondary" color="white" hvrBg="primary" onClick={() => registerWithKeycloak("/checkout")}>
+                                                Sign Up
+                                            </Button>
+                                        </>
+                                    )}
                                 </ActionRow>
-                                <MutedText>You must be signed in before an order or payment request is sent.</MutedText>
+                                {signedIn === false && (
+                                    <MutedText>You must be signed in before an order or payment request is sent.</MutedText>
+                                )}
                             </FurnsPanel>
 
                             <ServiceFlow flows={[...serviceFlows.checkout, ...serviceFlows.payment]}/>

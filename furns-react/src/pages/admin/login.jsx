@@ -1,20 +1,27 @@
 import Head from "next/head";
+import {useRouter} from "next/router";
 import {useEffect, useState} from "react";
 import settings from "@data/settings";
 import Layout from "@components/layout";
 import Breadcrumb from "@components/ui/breadcrumb";
-import {loginWithKeycloak} from "@services/auth";
+import {isSignedIn, loginWithKeycloak} from "@services/auth";
 import {Col, Container, Row} from "@bootstrap";
 import {FurnsPanel, PageContent, PanelSubtitle, PanelTitle} from "@components/furns/furns.style";
 
 const AdminLoginPage = () => {
+    const router = useRouter();
     const [error, setError] = useState("");
 
     useEffect(() => {
+        if (isSignedIn()) {
+            router.replace("/admin");
+            return;
+        }
+
         loginWithKeycloak("/admin").catch((err) => {
             setError(err.message || "Unable to redirect to Keycloak.");
         });
-    }, []);
+    }, [router]);
 
     return (
         <Layout>

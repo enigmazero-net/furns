@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import Logo from "@components/ui/logo";
 import { useSelector } from "react-redux";
@@ -8,6 +8,7 @@ import { HiOutlineShoppingBag } from "react-icons/hi";
 import { getCartProductsQuantity } from "@utils/product";
 import { AiOutlineMenu, AiOutlineSetting } from "react-icons/ai";
 import { IoPersonOutline, IoSearchOutline } from "react-icons/io5";
+import {isSignedIn} from "@services/auth";
 import {
   DropdownMenu,
   DropdownToggleButton,
@@ -27,8 +28,13 @@ const HeaderBottom = ({
   onMobileNavHandler,
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [signedIn, setSignedIn] = useState(null);
   const shoppingCart = useSelector((state) => state.shoppingCart);
   const cartQuantity = getCartProductsQuantity(shoppingCart);
+
+  useEffect(() => {
+    setSignedIn(isSignedIn());
+  }, []);
 
   return (
     <HeaderBottomWrap>
@@ -87,12 +93,16 @@ const HeaderBottom = ({
                   align="center"
                   className={isDropdownOpen ? "show" : "hide"}
                 >
-                  <li>
-                    <Link href="/login">Login</Link>
-                  </li>
-                  <li>
-                    <Link href="/register">Register</Link>
-                  </li>
+                  {signedIn === false && (
+                    <>
+                      <li>
+                        <Link href="/login">Login</Link>
+                      </li>
+                      <li>
+                        <Link href="/register">Register</Link>
+                      </li>
+                    </>
+                  )}
                   <li>
                     <Link href="/account">Account</Link>
                   </li>

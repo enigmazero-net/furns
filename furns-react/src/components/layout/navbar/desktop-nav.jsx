@@ -2,11 +2,34 @@ import Link from "next/link";
 import cn from "classnames";
 import navData from "@data/nav";
 import PropTypes from "prop-types";
+import {useEffect, useMemo, useState} from "react";
 import {IoIosArrowDown} from "react-icons/io";
+import {isSignedIn} from "@services/auth";
 import {Container, Col, Row} from "@bootstrap";
 import {NavbarWrap, Nav, NavList, SubMenu} from "./desktop-nav.style";
 
 const DesktopNav = ({bg, className}) => {
+    const [signedIn, setSignedIn] = useState(null);
+    const visibleNav = useMemo(() => {
+        if (signedIn === false) return navData;
+
+        return navData.map((navItem) => {
+            if (!navItem.submenu) return navItem;
+
+            return {
+                ...navItem,
+                submenu: navItem.submenu.map((group) => ({
+                    ...group,
+                    list: group.list.filter((item) => !["/login", "/register"].includes(item.link)),
+                })),
+            };
+        });
+    }, [signedIn]);
+
+    useEffect(() => {
+        setSignedIn(isSignedIn());
+    }, []);
+
     return (
         <NavbarWrap bg={bg} className={cn(className)}>
             <Container>
@@ -14,7 +37,7 @@ const DesktopNav = ({bg, className}) => {
                     <Col>
                         <Nav>
                             <NavList>
-                                {navData.map((navItem, index) => (
+                                {visibleNav.map((navItem, index) => (
                                     <li key={index} className={navItem.submenu ? "dropdown" : undefined}>
                                         <Link href={navItem.link}>
                                             <a>

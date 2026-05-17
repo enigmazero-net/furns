@@ -2,14 +2,37 @@ import cn from "classnames";
 import Link from "next/link";
 import navData from "@data/nav";
 import PropTypes from "prop-types";
+import {useEffect, useMemo, useState} from "react";
 import Logo from "@components/ui/logo";
 import OffCanvas from "@components/ui/offCanvas";
 import {CgMathPlus, CgMathMinus} from "react-icons/cg";
+import {isSignedIn} from "@services/auth";
 import {MobileNav} from "@components/layout/navbar/mobile-nav.style";
 import {getClosest, getSiblings, slideToggle, slideUp} from "@utils/method";
 import {OffCanvasCloseBtn, OffCanvasHead} from "@components/ui/offCanvas/style";
 
 const MobileNavbar = ({isOpen, onHandler}) => {
+    const [signedIn, setSignedIn] = useState(null);
+    const visibleNav = useMemo(() => {
+        if (signedIn === false) return navData;
+
+        return navData.map((navItem) => {
+            if (!navItem.submenu) return navItem;
+
+            return {
+                ...navItem,
+                submenu: navItem.submenu.map((group) => ({
+                    ...group,
+                    list: group.list.filter((item) => !["/login", "/register"].includes(item.link)),
+                })),
+            };
+        });
+    }, [signedIn]);
+
+    useEffect(() => {
+        setSignedIn(isSignedIn());
+    }, []);
+
     const onNavHandler = (e) => {
         const target = e.target;
         const hasSubmenus = getSiblings(target);
@@ -49,7 +72,7 @@ const MobileNavbar = ({isOpen, onHandler}) => {
 
             <MobileNav>
                 <ul>
-                    {navData.map(nav => (
+                    {visibleNav.map(nav => (
                         <li key={nav?.text}>
                             <Link href={nav?.link}>
                                 <a

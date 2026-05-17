@@ -1,9 +1,16 @@
 import Link from "next/link";
+import {useEffect, useState} from "react";
 import Widget from "@components/ui/widget";
 import {Container, Col, Row, Ul, Li,} from "@bootstrap";
+import {isSignedIn} from "@services/auth";
 import {WidgetWrapper} from "./footer.style";
 
 const FooterWidget = (props) => {
+    const [signedIn, setSignedIn] = useState(null);
+
+    useEffect(() => {
+        setSignedIn(isSignedIn());
+    }, []);
 
     return (
         <WidgetWrapper
@@ -30,8 +37,12 @@ const FooterWidget = (props) => {
                             mb={[30, null, null, 0]}
                         >
                             <Ul className="widget-list">
-                                <Li><Link href="/login">Login</Link></Li>
-                                <Li><Link href="/register">Register</Link></Li>
+                                {signedIn === false && (
+                                    <>
+                                        <Li><Link href="/login">Login</Link></Li>
+                                        <Li><Link href="/register">Register</Link></Li>
+                                    </>
+                                )}
                                 <Li><Link href="/cart">Cart</Link></Li>
                                 <Li><Link href="/checkout">Checkout</Link></Li>
                                 <Li><Link href="/account/orders">Order History</Link></Li>
