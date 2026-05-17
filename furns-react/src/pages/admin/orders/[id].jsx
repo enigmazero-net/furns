@@ -8,10 +8,11 @@ import Input from "@components/ui/input";
 import Button from "@components/ui/button";
 import Breadcrumb from "@components/ui/breadcrumb";
 import {getAdminOrder, normalizeOrder, updateAdminOrderStatus} from "@services/api";
-import {getAccessToken, loginWithKeycloak} from "@services/auth";
+import {getAccessToken, isAdminUser, loginWithKeycloak} from "@services/auth";
 import {Col, Container, Row} from "@bootstrap";
-import {ServiceFlow, statusVariant} from "@components/furns";
-import {getMockOrder, serviceFlows} from "@data/furns";
+import AdminGuard from "@components/admin/guard";
+import {statusVariant} from "@components/furns";
+import {getMockOrder} from "@data/furns";
 import {
     ActionRow,
     FieldBlock,
@@ -42,7 +43,7 @@ const AdminOrderDetailsPage = () => {
         setStatus(nextOrder.status);
 
         const token = getAccessToken();
-        if (!token) return;
+        if (!token || !isAdminUser()) return;
 
         getAdminOrder(token, router.query.id)
             .then((data) => {
@@ -57,6 +58,15 @@ const AdminOrderDetailsPage = () => {
         const token = getAccessToken();
         if (!token) {
             await loginWithKeycloak(`/admin/orders/${orderId}`);
+            return;
+        }
+
+        if (!isAdminUser()) {
+            cogoToast.error("Your account does not have an administrator role.", {
+                position: "top-right",
+                heading: "Admin Access Required",
+                hideAfter: 4,
+            });
             return;
         }
 
@@ -94,8 +104,9 @@ const AdminOrderDetailsPage = () => {
 
             <PageContent>
                 <Container>
-                    <Row>
-                        <Col lg={8}>
+                    <AdminGuard>
+                        <Row>
+                        <Col lg={12}>
                             <FurnsPanel>
                                 <PanelTitle>Order Review</PanelTitle>
                                 <SummaryList>
@@ -174,10 +185,8 @@ const AdminOrderDetailsPage = () => {
                                 </FurnsTableWrap>
                             </FurnsPanel>
                         </Col>
-                        <Col lg={4}>
-                            <ServiceFlow flows={[serviceFlows.admin[0], serviceFlows.admin[2], serviceFlows.admin[1]]}/>
-                        </Col>
-                    </Row>
+                        </Row>
+                    </AdminGuard>
                 </Container>
             </PageContent>
         </Layout>

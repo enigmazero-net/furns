@@ -143,30 +143,6 @@ export const StatusPill = styled.span`
   font-weight: ${themeGet("fontWeights.subHeading")};
 `;
 
-export const FlowList = styled.ul`
-  margin: 0;
-  padding: 0;
-  list-style: none;
-
-  li {
-    display: flex;
-    gap: 12px;
-    padding: 10px 0;
-    color: ${themeGet("colors.text")};
-    border-bottom: 1px solid ${themeGet("colors.borderLight")};
-  }
-
-  li:last-child {
-    border-bottom: 0;
-  }
-`;
-
-export const FlowNumber = styled.span`
-  min-width: 32px;
-  color: ${themeGet("colors.primary")};
-  font-weight: ${themeGet("fontWeights.heading")};
-`;
-
 export const SummaryList = styled.dl`
   display: grid;
   grid-template-columns: 180px 1fr;
@@ -201,4 +177,3 @@ export const StepList = styled.ol`
     padding-bottom: 0;
   }
 `;
-

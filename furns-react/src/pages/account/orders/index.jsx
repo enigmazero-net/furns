@@ -6,8 +6,8 @@ import Breadcrumb from "@components/ui/breadcrumb";
 import {getOrders, normalizeOrder} from "@services/api";
 import {getAccessToken} from "@services/auth";
 import {Col, Container, Row} from "@bootstrap";
-import {OrdersTable, ServiceFlow} from "@components/furns";
-import {mockOrders, serviceFlows} from "@data/furns";
+import {OrdersTable} from "@components/furns";
+import {mockOrders} from "@data/furns";
 import {FurnsPanel, PageContent, PanelSubtitle, PanelTitle} from "@components/furns/furns.style";
 
 const toArray = (data) => {
@@ -43,7 +43,7 @@ const OrdersPage = () => {
             <PageContent>
                 <Container>
                     <Row>
-                        <Col lg={8}>
+                        <Col lg={12}>
                             <FurnsPanel>
                                 <PanelTitle>Customer Orders</PanelTitle>
                                 <PanelSubtitle>
@@ -51,9 +51,6 @@ const OrdersPage = () => {
                                 </PanelSubtitle>
                                 <OrdersTable orders={orders}/>
                             </FurnsPanel>
-                        </Col>
-                        <Col lg={4}>
-                            <ServiceFlow flows={serviceFlows.order}/>
                         </Col>
                     </Row>
                 </Container>

@@ -7,8 +7,8 @@ import Button from "@components/ui/button";
 import Breadcrumb from "@components/ui/breadcrumb";
 import {fetchProducts, normalizeAdminProduct} from "@services/api";
 import {Col, Container, Row} from "@bootstrap";
-import {ServiceFlow, statusVariant} from "@components/furns";
-import {serviceFlows} from "@data/furns";
+import AdminGuard from "@components/admin/guard";
+import {statusVariant} from "@components/furns";
 import {
     ActionRow,
     FieldBlock,
@@ -32,12 +32,13 @@ const AdminProductsPage = ({products}) => (
 
         <PageContent>
             <Container>
-                <Row>
-                    <Col lg={8}>
+                <AdminGuard>
+                    <Row>
+                    <Col lg={12}>
                         <FurnsPanel>
                             <PanelTitle>Product Catalog Management</PanelTitle>
                             <PanelSubtitle>
-                                Product reads and updates represent admin access to the Product Catalog Database.
+                                Review and manage products shown in the storefront.
                             </PanelSubtitle>
                             <FormGrid>
                                 <FieldBlock>
@@ -85,10 +86,8 @@ const AdminProductsPage = ({products}) => (
                             </FurnsTableWrap>
                         </FurnsPanel>
                     </Col>
-                    <Col lg={4}>
-                        <ServiceFlow flows={[serviceFlows.admin[0], serviceFlows.admin[3], serviceFlows.admin[1]]}/>
-                    </Col>
-                </Row>
+                    </Row>
+                </AdminGuard>
             </Container>
         </PageContent>
     </Layout>

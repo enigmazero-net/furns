@@ -13,15 +13,21 @@ const LoginPage = () => {
     const [error, setError] = useState("");
 
     useEffect(() => {
+        if (!router.isReady) return;
+
+        const returnTo = typeof router.query.returnTo === "string" && router.query.returnTo.startsWith("/")
+            ? router.query.returnTo
+            : "/account";
+
         if (isSignedIn()) {
-            router.replace("/account");
+            router.replace(returnTo);
             return;
         }
 
-        loginWithKeycloak("/account").catch((err) => {
+        loginWithKeycloak(returnTo).catch((err) => {
             setError(err.message || "Unable to redirect to Keycloak.");
         });
-    }, [router]);
+    }, [router, router.isReady, router.query.returnTo]);
 
     return (
         <Layout>

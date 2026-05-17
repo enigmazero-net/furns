@@ -6,8 +6,6 @@ import Button from "@components/ui/button";
 import Breadcrumb from "@components/ui/breadcrumb";
 import {getAccessToken, loginWithKeycloak, registerWithKeycloak} from "@services/auth";
 import {Col, Container, Row} from "@bootstrap";
-import {ServiceFlow} from "@components/furns";
-import {serviceFlows} from "@data/furns";
 import {
     ActionRow,
     FurnsPanel,
@@ -36,7 +34,7 @@ const PaymentProcessingPage = () => {
             <PageContent>
                 <Container>
                     <Row>
-                        <Col lg={7}>
+                        <Col lg={12}>
                             <FurnsPanel>
                                 <PanelTitle>
                                     {hasToken === null
@@ -80,9 +78,6 @@ const PaymentProcessingPage = () => {
                                     </ActionRow>
                                 ) : null}
                             </FurnsPanel>
-                        </Col>
-                        <Col lg={5}>
-                            <ServiceFlow flows={serviceFlows.payment}/>
                         </Col>
                     </Row>
                 </Container>

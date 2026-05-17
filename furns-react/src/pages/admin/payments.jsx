@@ -2,15 +2,13 @@ import Head from "next/head";
 import {useEffect, useState} from "react";
 import settings from "@data/settings";
 import Layout from "@components/layout";
-import Button from "@components/ui/button";
 import Breadcrumb from "@components/ui/breadcrumb";
 import {getAdminPayments, normalizePayment} from "@services/api";
-import {getAccessToken, loginWithKeycloak} from "@services/auth";
+import {getAccessToken, isAdminUser} from "@services/auth";
 import {Col, Container, Row} from "@bootstrap";
-import {ServiceFlow, statusVariant} from "@components/furns";
-import {serviceFlows} from "@data/furns";
+import AdminGuard from "@components/admin/guard";
+import {statusVariant} from "@components/furns";
 import {
-    ActionRow,
     FurnsPanel,
     FurnsTable,
     FurnsTableWrap,
@@ -29,19 +27,15 @@ const toArray = (data) => {
 
 const AdminPaymentsPage = () => {
     const [payments, setPayments] = useState([]);
-    const [hasToken, setHasToken] = useState(false);
 
     useEffect(() => {
         const token = getAccessToken();
-        setHasToken(Boolean(token));
-        if (!token) return;
+        if (!token || !isAdminUser()) return;
 
         getAdminPayments(token)
             .then((data) => setPayments(toArray(data).map(normalizePayment)))
             .catch(() => {});
     }, []);
-
-    const onLoginHandler = () => loginWithKeycloak("/admin/payments");
 
     return (
         <Layout>
@@ -53,20 +47,14 @@ const AdminPaymentsPage = () => {
 
             <PageContent>
                 <Container>
-                    <Row>
-                        <Col lg={8}>
+                    <AdminGuard>
+                        <Row>
+                        <Col lg={12}>
                             <FurnsPanel>
                                 <PanelTitle>Payment Transactions</PanelTitle>
                                 <PanelSubtitle>
-                                    Payment records load from the protected Admin Management Service after Keycloak login.
+                                    Payment records load after administrator access is verified.
                                 </PanelSubtitle>
-                                {!hasToken && (
-                                    <ActionRow>
-                                        <Button tag="button" bg="primary" color="white" hvrBg="secondary" onClick={onLoginHandler}>
-                                            Login With Keycloak
-                                        </Button>
-                                    </ActionRow>
-                                )}
                                 <FurnsTableWrap>
                                     <FurnsTable>
                                         <thead>
@@ -95,10 +83,8 @@ const AdminPaymentsPage = () => {
                                 </FurnsTableWrap>
                             </FurnsPanel>
                         </Col>
-                        <Col lg={4}>
-                            <ServiceFlow flows={[serviceFlows.admin[0], ...serviceFlows.payment]}/>
-                        </Col>
-                    </Row>
+                        </Row>
+                    </AdminGuard>
                 </Container>
             </PageContent>
         </Layout>

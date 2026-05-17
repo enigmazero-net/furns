@@ -1,40 +1,3 @@
-export const serviceFlows = {
-    auth: ["02 Frontend -> Authentication Service", "06 Authentication Service -> User Database"],
-    catalog: ["03 Frontend -> Product Catalog Service", "07 Product Catalog Service -> Product Catalog Database"],
-    cart: ["04 Frontend -> Cart Service", "08 Cart Service -> Cart Store"],
-    checkout: [
-        "05 Frontend -> Checkout Service",
-        "09 Checkout Service -> Order Management Service",
-        "12 Checkout Service -> Payment Processing Service",
-    ],
-    payment: [
-        "13 Payment Processing Service -> Third-Party Gateway",
-        "14 Third-Party Gateway -> Payment Processing Service",
-        "15 Payment Processing Service -> Order Management Service",
-        "10 Payment Processing Service -> Payment Transaction Store",
-    ],
-    order: [
-        "23 Order Management Service -> Order Database",
-        "24 Frontend -> Order Management Service",
-    ],
-    notification: [
-        "16 Order Management Service -> Notification Service",
-        "17 Notification Service -> External Notification Provider",
-        "25 External Notification Provider -> Client / User",
-    ],
-    admin: [
-        "18 Admin User -> Admin Management Service",
-        "19 Admin Management Service -> Audit Log Store",
-        "20 Admin Management Service -> Order Database",
-        "21 Admin Management Service -> Product Catalog Database",
-    ],
-    audit: [
-        "11 Order Management Service -> Audit Log Store",
-        "19 Admin Management Service -> Audit Log Store",
-        "22 System Services -> Audit Log Store",
-    ],
-};
-
 export const mockUser = {
     name: "Furns Customer",
     email: "customer@furns.local",
@@ -108,4 +71,3 @@ export const auditEvents = [
 ];
 
 export const getMockOrder = (id) => mockOrders.find((order) => order.id === id) || mockOrders[0];
-

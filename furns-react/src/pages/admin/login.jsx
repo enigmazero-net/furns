@@ -4,7 +4,7 @@ import {useEffect, useState} from "react";
 import settings from "@data/settings";
 import Layout from "@components/layout";
 import Breadcrumb from "@components/ui/breadcrumb";
-import {isSignedIn, loginWithKeycloak} from "@services/auth";
+import {isAdminUser, isSignedIn, loginWithKeycloak} from "@services/auth";
 import {Col, Container, Row} from "@bootstrap";
 import {FurnsPanel, PageContent, PanelSubtitle, PanelTitle} from "@components/furns/furns.style";
 
@@ -14,7 +14,7 @@ const AdminLoginPage = () => {
 
     useEffect(() => {
         if (isSignedIn()) {
-            router.replace("/admin");
+            router.replace(isAdminUser() ? "/admin" : "/account");
             return;
         }
 

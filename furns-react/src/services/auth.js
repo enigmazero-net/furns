@@ -4,6 +4,10 @@ const PKCE_STORAGE_KEY = "furns-pkce";
 const keycloakUrl = process.env.NEXT_PUBLIC_KEYCLOAK_URL || "http://178.105.114.143/keycloak";
 const keycloakRealm = process.env.NEXT_PUBLIC_KEYCLOAK_REALM || "online-store";
 const keycloakClientId = process.env.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID || "online-store-app";
+const adminRoles = (process.env.NEXT_PUBLIC_ADMIN_ROLES || "admin,administrator")
+    .split(",")
+    .map((role) => role.trim().toLowerCase())
+    .filter(Boolean);
 
 const isBrowser = () => typeof window !== "undefined";
 
@@ -256,3 +260,10 @@ export const getUserProfile = () => {
         roles: [...new Set([...realmRoles, ...clientRoles])],
     };
 };
+
+export const hasAdminRole = (profile = getUserProfile()) => {
+    const roles = profile?.roles || [];
+    return roles.some((role) => adminRoles.includes(String(role).toLowerCase()));
+};
+
+export const isAdminUser = () => isSignedIn() && hasAdminRole();

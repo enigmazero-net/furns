@@ -7,8 +7,8 @@ import Breadcrumb from "@components/ui/breadcrumb";
 import {getOrder, normalizeOrder} from "@services/api";
 import {getAccessToken} from "@services/auth";
 import {Col, Container, Row} from "@bootstrap";
-import {ServiceFlow, statusVariant} from "@components/furns";
-import {getMockOrder, serviceFlows} from "@data/furns";
+import {statusVariant} from "@components/furns";
+import {getMockOrder} from "@data/furns";
 import {
     FurnsPanel,
     FurnsTable,
@@ -49,7 +49,7 @@ const OrderDetailsPage = () => {
             <PageContent>
                 <Container>
                     <Row>
-                        <Col lg={8}>
+                        <Col lg={12}>
                             <FurnsPanel>
                                 <PanelTitle>Order Details</PanelTitle>
                                 <PanelSubtitle>
@@ -94,9 +94,6 @@ const OrderDetailsPage = () => {
                                     </FurnsTable>
                                 </FurnsTableWrap>
                             </FurnsPanel>
-                        </Col>
-                        <Col lg={4}>
-                            <ServiceFlow flows={[...serviceFlows.order, ...serviceFlows.payment, ...serviceFlows.notification]}/>
                         </Col>
                     </Row>
                 </Container>

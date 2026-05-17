@@ -7,10 +7,10 @@ import Input, {TextArea} from "@components/ui/input";
 import Button from "@components/ui/button";
 import Breadcrumb from "@components/ui/breadcrumb";
 import {fetchProductById, normalizeAdminProduct, updateAdminProductStock} from "@services/api";
-import {getAccessToken, loginWithKeycloak} from "@services/auth";
+import {getAccessToken, isAdminUser, loginWithKeycloak} from "@services/auth";
 import {Col, Container, Row} from "@bootstrap";
-import {ServiceFlow} from "@components/furns";
-import {adminProducts, serviceFlows} from "@data/furns";
+import AdminGuard from "@components/admin/guard";
+import {adminProducts} from "@data/furns";
 import {
     ActionRow,
     FieldBlock,
@@ -30,6 +30,15 @@ const AdminEditProductPage = ({product}) => {
         const token = getAccessToken();
         if (!token) {
             await loginWithKeycloak(`/admin/products/${product.id}/edit`);
+            return;
+        }
+
+        if (!isAdminUser()) {
+            cogoToast.error("Your account does not have an administrator role.", {
+                position: "top-right",
+                heading: "Admin Access Required",
+                hideAfter: 4,
+            });
             return;
         }
 
@@ -63,12 +72,13 @@ const AdminEditProductPage = ({product}) => {
 
             <PageContent>
                 <Container>
-                    <Row>
-                        <Col lg={8}>
+                    <AdminGuard>
+                        <Row>
+                        <Col lg={12}>
                             <FurnsPanel>
                                 <PanelTitle>{product.name}</PanelTitle>
                                 <PanelSubtitle>
-                                    Admin catalog edits will later write to the Product Catalog Database and record an audit event.
+                                    Update product details and stock for the storefront.
                                 </PanelSubtitle>
                                 <FormGrid>
                                     <FieldBlock>
@@ -117,10 +127,8 @@ const AdminEditProductPage = ({product}) => {
                                 </ActionRow>
                             </FurnsPanel>
                         </Col>
-                        <Col lg={4}>
-                            <ServiceFlow flows={[serviceFlows.admin[3], serviceFlows.admin[1]]}/>
-                        </Col>
-                    </Row>
+                        </Row>
+                    </AdminGuard>
                 </Container>
             </PageContent>
         </Layout>

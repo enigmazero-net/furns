@@ -5,8 +5,7 @@ import Input, {TextArea} from "@components/ui/input";
 import Button from "@components/ui/button";
 import Breadcrumb from "@components/ui/breadcrumb";
 import {Col, Container, Row} from "@bootstrap";
-import {ServiceFlow} from "@components/furns";
-import {serviceFlows} from "@data/furns";
+import AdminGuard from "@components/admin/guard";
 import {
     ActionRow,
     FieldBlock,
@@ -28,8 +27,9 @@ const AdminNewProductPage = () => (
 
         <PageContent>
             <Container>
-                <Row>
-                    <Col lg={8}>
+                <AdminGuard>
+                    <Row>
+                    <Col lg={12}>
                         <FurnsPanel>
                             <PanelTitle>Create Product</PanelTitle>
                             <PanelSubtitle>
@@ -70,14 +70,11 @@ const AdminNewProductPage = () => (
                             </ActionRow>
                         </FurnsPanel>
                     </Col>
-                    <Col lg={4}>
-                        <ServiceFlow flows={[serviceFlows.admin[3], serviceFlows.admin[1]]}/>
-                    </Col>
-                </Row>
+                    </Row>
+                </AdminGuard>
             </Container>
         </PageContent>
     </Layout>
 );
 
 export default AdminNewProductPage;
-

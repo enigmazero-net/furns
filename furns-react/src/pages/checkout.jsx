@@ -13,8 +13,6 @@ import {getAccessToken, isSignedIn, loginWithKeycloak, registerWithKeycloak} fro
 import {Col, Container, Row} from "@bootstrap";
 import {CURRENCY} from "@utils/constant";
 import {getCartTotalPrice} from "@utils/product";
-import {ServiceFlow} from "@components/furns";
-import {serviceFlows} from "@data/furns";
 import {
     ActionRow,
     FieldBlock,
@@ -270,8 +268,6 @@ const CheckoutPage = () => {
                                     <MutedText>You must be signed in before an order or payment request is sent.</MutedText>
                                 )}
                             </FurnsPanel>
-
-                            <ServiceFlow flows={[...serviceFlows.checkout, ...serviceFlows.payment]}/>
                         </Col>
                     </Row>
                 </Container>

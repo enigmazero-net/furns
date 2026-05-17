@@ -7,8 +7,8 @@ import Breadcrumb from "@components/ui/breadcrumb";
 import {getMe, normalizeUser} from "@services/api";
 import {getAccessToken, getUserProfile} from "@services/auth";
 import {Col, Container, Row} from "@bootstrap";
-import {Metrics, ServiceFlow} from "@components/furns";
-import {mockOrders, mockUser, serviceFlows} from "@data/furns";
+import {Metrics} from "@components/furns";
+import {mockOrders, mockUser} from "@data/furns";
 import {
     ActionRow,
     FurnsPanel,
@@ -65,7 +65,7 @@ const AccountPage = () => {
                     </FurnsPanel>
 
                     <Row>
-                        <Col lg={8}>
+                        <Col lg={12}>
                             <FurnsPanel>
                                 <PanelTitle>Account Activity</PanelTitle>
                                 <PanelSubtitle>
@@ -80,9 +80,6 @@ const AccountPage = () => {
                                     ]}
                                 />
                             </FurnsPanel>
-                        </Col>
-                        <Col lg={4}>
-                            <ServiceFlow flows={[...serviceFlows.auth, ...serviceFlows.order]}/>
                         </Col>
                     </Row>
                 </Container>

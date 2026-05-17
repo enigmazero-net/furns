@@ -16,8 +16,6 @@ export const statusVariant = (status = "") => {
     return "success";
 };
 
-export const ServiceFlow = () => null;
-
 export const Metrics = ({items}) => (
     <MetricGrid>
         {items.map((item) => (

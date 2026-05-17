@@ -4,10 +4,10 @@ import settings from "@data/settings";
 import Layout from "@components/layout";
 import Breadcrumb from "@components/ui/breadcrumb";
 import {getAdminAuditLogs, normalizeAuditEvent} from "@services/api";
-import {getAccessToken} from "@services/auth";
+import {getAccessToken, isAdminUser} from "@services/auth";
 import {Col, Container, Row} from "@bootstrap";
-import {ServiceFlow} from "@components/furns";
-import {auditEvents, serviceFlows} from "@data/furns";
+import AdminGuard from "@components/admin/guard";
+import {auditEvents} from "@data/furns";
 import {
     FurnsPanel,
     FurnsTable,
@@ -29,7 +29,7 @@ const AdminAuditLogsPage = () => {
 
     useEffect(() => {
         const token = getAccessToken();
-        if (!token) return;
+        if (!token || !isAdminUser()) return;
 
         getAdminAuditLogs(token)
             .then((data) => {
@@ -49,12 +49,13 @@ const AdminAuditLogsPage = () => {
 
             <PageContent>
                 <Container>
-                    <Row>
-                        <Col lg={8}>
+                    <AdminGuard>
+                        <Row>
+                        <Col lg={12}>
                             <FurnsPanel>
-                                <PanelTitle>Audit Log Store</PanelTitle>
+                                <PanelTitle>Audit Logs</PanelTitle>
                                 <PanelSubtitle>
-                                    Audit entries show security, order, payment, and administrative activity from the internal services.
+                                    Audit entries show security, order, payment, and administrative activity.
                                 </PanelSubtitle>
                                 <FurnsTableWrap>
                                     <FurnsTable>
@@ -82,10 +83,8 @@ const AdminAuditLogsPage = () => {
                                 </FurnsTableWrap>
                             </FurnsPanel>
                         </Col>
-                        <Col lg={4}>
-                            <ServiceFlow flows={serviceFlows.audit}/>
-                        </Col>
-                    </Row>
+                        </Row>
+                    </AdminGuard>
                 </Container>
             </PageContent>
         </Layout>
