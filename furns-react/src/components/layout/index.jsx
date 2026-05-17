@@ -38,10 +38,16 @@ const Layout = ({children, bg, ...props}) => {
     }
 
     useEffect(() => {
-        router.events.on('routeChangeStart', () => {
-            document.querySelector('body').classList.remove('overflow');
-        });
-    }, [])
+        const handleRouteChangeStart = () => {
+            document.querySelector('body')?.classList.remove('overflow');
+        };
+
+        router.events.on('routeChangeStart', handleRouteChangeStart);
+
+        return () => {
+            router.events.off('routeChangeStart', handleRouteChangeStart);
+        };
+    }, [router.events])
 
     return (
         <Fragment>

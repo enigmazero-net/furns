@@ -18,9 +18,11 @@ const CartButton = ({onHandler}) => {
             return
         }
         buttonRef.current.classList.add('animated');
-        setTimeout(() => {
-            buttonRef.current.classList.remove('animated');
+        const timeout = setTimeout(() => {
+            buttonRef.current?.classList.remove('animated');
         }, 1000);
+
+        return () => clearTimeout(timeout);
     }, [cart]);
 
     return (

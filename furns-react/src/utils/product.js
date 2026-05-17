@@ -6,7 +6,10 @@
  * @returns {number|*}
  */
 export const getCartProductQuantity = (shoppingCart, product, variations) => {
-    const productOnCart = shoppingCart.find(item => item?.id === product?.id && (item?.variations === variations));
+    const productOnCart = shoppingCart.find(item => (
+        item?.id === product?.id &&
+        (item?.variations?.id || item?.variations?.title) === (variations?.id || variations?.title)
+    ));
 
     if (productOnCart) {
         return productOnCart?.quantity;
@@ -65,7 +68,10 @@ export const getCartTotalPrice = (shoppingCart) => {
  * @returns {*}
  */
 export const getCartProduct = (shoppingCart, product, variations) => {
-    return shoppingCart.find(item => (item.id === product.id) && (item.variations === variations));
+    return shoppingCart.find(item => (
+        item.id === product.id &&
+        (item.variations?.id || item.variations?.title) === (variations?.id || variations?.title)
+    ));
 }
 
 /****
