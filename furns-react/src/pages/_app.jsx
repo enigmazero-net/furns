@@ -3,9 +3,8 @@ import { Fragment } from "react";
 import { Provider } from "react-redux";
 import BootstrapProvider from "@bootstrap";
 import { ThemeProvider, theme } from "@styled";
-import { persistor, store } from "@global/store";
+import { store } from "@global/store";
 import { GlobalStyle } from "@assets/css/global.style";
-import { PersistGate } from "redux-persist/integration/react";
 
 // CSS import
 import "swiper/swiper.scss";
@@ -52,9 +51,7 @@ const FurnsAPP = ({ Component, pageProps }) => {
         <BootstrapProvider theme={themeBootstrap} reset={true}>
           <GlobalStyle />
           <Provider store={store}>
-            <PersistGate loading={null} persistor={persistor}>
-              <Component {...pageProps} />
-            </PersistGate>
+            <Component {...pageProps} />
           </Provider>
         </BootstrapProvider>
       </ThemeProvider>
