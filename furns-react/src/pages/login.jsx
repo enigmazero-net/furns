@@ -1,32 +1,20 @@
 import Head from "next/head";
-import Link from "next/link";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import settings from "@data/settings";
 import Layout from "@components/layout";
-import Input from "@components/ui/input";
-import Button from "@components/ui/button";
 import Breadcrumb from "@components/ui/breadcrumb";
 import {loginWithKeycloak} from "@services/auth";
 import {Col, Container, Row} from "@bootstrap";
-import {ServiceFlow} from "@components/furns";
-import {serviceFlows} from "@data/furns";
-import {
-    ActionRow,
-    FieldBlock,
-    FurnsPanel,
-    LinkText,
-    PageContent,
-    PanelSubtitle,
-    PanelTitle,
-} from "@components/furns/furns.style";
+import {FurnsPanel, PageContent, PanelSubtitle, PanelTitle} from "@components/furns/furns.style";
 
 const LoginPage = () => {
-    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState("");
 
-    const onLoginHandler = async () => {
-        setIsLoading(true);
-        await loginWithKeycloak("/account");
-    };
+    useEffect(() => {
+        loginWithKeycloak("/account").catch((err) => {
+            setError(err.message || "Unable to redirect to Keycloak.");
+        });
+    }, []);
 
     return (
         <Layout>
@@ -41,40 +29,11 @@ const LoginPage = () => {
                     <Row>
                         <Col lg={7}>
                             <FurnsPanel>
-                                <PanelTitle>Sign In</PanelTitle>
+                                <PanelTitle>{error ? "Login Redirect Failed" : "Redirecting To Keycloak"}</PanelTitle>
                                 <PanelSubtitle>
-                                    Customer authentication starts here before checkout and order history requests.
+                                    {error || "Please wait while we send you to Keycloak for customer login."}
                                 </PanelSubtitle>
-
-                                <FieldBlock>
-                                    <Input id="email" type="email" label="Email Address" placeholder="customer@furns.local"/>
-                                </FieldBlock>
-                                <FieldBlock>
-                                    <Input id="password" type="password" label="Password" placeholder="Enter password"/>
-                                </FieldBlock>
-
-                                <ActionRow>
-                                    <Button
-                                        tag="button"
-                                        bg="primary"
-                                        color="white"
-                                        hvrBg="secondary"
-                                        loading={isLoading}
-                                        onClick={onLoginHandler}
-                                    >
-                                        Login With Keycloak
-                                    </Button>
-                                    <span>
-                                        Need an account?{" "}
-                                        <Link href="/register" passHref>
-                                            <LinkText>Register</LinkText>
-                                        </Link>
-                                    </span>
-                                </ActionRow>
                             </FurnsPanel>
-                        </Col>
-                        <Col lg={5}>
-                            <ServiceFlow flows={serviceFlows.auth}/>
                         </Col>
                     </Row>
                 </Container>

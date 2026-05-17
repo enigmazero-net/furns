@@ -1,33 +1,20 @@
 import Head from "next/head";
-import Link from "next/link";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import settings from "@data/settings";
 import Layout from "@components/layout";
-import Input from "@components/ui/input";
-import Button from "@components/ui/button";
 import Breadcrumb from "@components/ui/breadcrumb";
 import {registerWithKeycloak} from "@services/auth";
 import {Col, Container, Row} from "@bootstrap";
-import {ServiceFlow} from "@components/furns";
-import {serviceFlows} from "@data/furns";
-import {
-    ActionRow,
-    FieldBlock,
-    FormGrid,
-    FurnsPanel,
-    LinkText,
-    PageContent,
-    PanelSubtitle,
-    PanelTitle,
-} from "@components/furns/furns.style";
+import {FurnsPanel, PageContent, PanelSubtitle, PanelTitle} from "@components/furns/furns.style";
 
 const RegisterPage = () => {
-    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState("");
 
-    const onRegisterHandler = async () => {
-        setIsLoading(true);
-        await registerWithKeycloak("/account");
-    };
+    useEffect(() => {
+        registerWithKeycloak("/account").catch((err) => {
+            setError(err.message || "Unable to redirect to Keycloak.");
+        });
+    }, []);
 
     return (
         <Layout>
@@ -42,48 +29,11 @@ const RegisterPage = () => {
                     <Row>
                         <Col lg={7}>
                             <FurnsPanel>
-                                <PanelTitle>Customer Registration</PanelTitle>
+                                <PanelTitle>{error ? "Sign Up Redirect Failed" : "Redirecting To Keycloak"}</PanelTitle>
                                 <PanelSubtitle>
-                                    Create an account with Keycloak before checking out or making a payment.
+                                    {error || "Please wait while we send you to Keycloak for account registration."}
                                 </PanelSubtitle>
-
-                                <FormGrid>
-                                    <FieldBlock>
-                                        <Input id="name" label="Full Name" placeholder="Furns Customer"/>
-                                    </FieldBlock>
-                                    <FieldBlock>
-                                        <Input id="email" type="email" label="Email Address" placeholder="customer@furns.local"/>
-                                    </FieldBlock>
-                                    <FieldBlock>
-                                        <Input id="password" type="password" label="Password" placeholder="Create password"/>
-                                    </FieldBlock>
-                                    <FieldBlock>
-                                        <Input id="confirm-password" type="password" label="Confirm Password" placeholder="Confirm password"/>
-                                    </FieldBlock>
-                                </FormGrid>
-
-                                <ActionRow>
-                                    <Button
-                                        tag="button"
-                                        bg="primary"
-                                        color="white"
-                                        hvrBg="secondary"
-                                        loading={isLoading}
-                                        onClick={onRegisterHandler}
-                                    >
-                                        Sign Up With Keycloak
-                                    </Button>
-                                    <span>
-                                        Already registered?{" "}
-                                        <Link href="/login" passHref>
-                                            <LinkText>Login</LinkText>
-                                        </Link>
-                                    </span>
-                                </ActionRow>
                             </FurnsPanel>
-                        </Col>
-                        <Col lg={5}>
-                            <ServiceFlow flows={serviceFlows.auth}/>
                         </Col>
                     </Row>
                 </Container>
