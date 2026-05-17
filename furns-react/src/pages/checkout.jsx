@@ -25,7 +25,6 @@ import {
     PageContent,
     PanelSubtitle,
     PanelTitle,
-    StepList,
 } from "@components/furns/furns.style";
 
 const CheckoutPage = () => {
@@ -192,26 +191,13 @@ const CheckoutPage = () => {
                                     </FullWidth>
                                 </FormGrid>
                             </FurnsPanel>
-
-                            <FurnsPanel>
-                                <PanelTitle>Payment</PanelTitle>
-                                <PanelSubtitle>
-                                    Payment is available only after customer login. Create an account first if you do not already have one.
-                                </PanelSubtitle>
-                                <StepList>
-                                    <li>Checkout Service creates a pending order.</li>
-                                    <li>Payment Processing Service sends an authorization request to AcquireMock.</li>
-                                    <li>AcquireMock returns the payment result to the backend webhook.</li>
-                                    <li>Order Management Service updates the order and triggers notification.</li>
-                                </StepList>
-                            </FurnsPanel>
                         </Col>
 
                         <Col lg={4}>
                             <FurnsPanel>
                                 <PanelTitle>Order Summary</PanelTitle>
                                 <FurnsTableWrap>
-                                    <FurnsTable>
+                                    <FurnsTable $compact>
                                         <thead>
                                             <tr>
                                                 <th>Item</th>

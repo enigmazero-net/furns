@@ -113,7 +113,7 @@ export const FurnsTableWrap = styled.div`
 
 export const FurnsTable = styled.table`
   width: 100%;
-  min-width: 760px;
+  min-width: ${({$compact}) => ($compact ? "0" : "760px")};
   border-collapse: collapse;
 
   th,
@@ -128,6 +128,12 @@ export const FurnsTable = styled.table`
     background: ${themeGet("colors.offWhite")};
     font-family: ${themeGet("fonts.heading")};
     font-weight: ${themeGet("fontWeights.subHeading")};
+  }
+
+  th:last-child,
+  td:last-child {
+    text-align: right;
+    white-space: nowrap;
   }
 `;
 
@@ -161,19 +167,5 @@ export const SummaryList = styled.dl`
 
   ${devices.xs} {
     grid-template-columns: 1fr;
-  }
-`;
-
-export const StepList = styled.ol`
-  margin: 0;
-  padding-left: 18px;
-
-  li {
-    padding-bottom: 12px;
-    line-height: 1.7;
-  }
-
-  li:last-child {
-    padding-bottom: 0;
   }
 `;

@@ -13,7 +13,6 @@ import {
     PageContent,
     PanelSubtitle,
     PanelTitle,
-    StepList,
 } from "@components/furns/furns.style";
 
 const PaymentProcessingPage = () => {
@@ -52,11 +51,6 @@ const PaymentProcessingPage = () => {
                                 </PanelSubtitle>
                                 {hasToken === true ? (
                                     <>
-                                        <StepList>
-                                            <li>Payment Processing Service creates an AcquireMock invoice.</li>
-                                            <li>Customer completes payment in the external mock gateway boundary.</li>
-                                            <li>Gateway returns success, failure, or cancellation to the application.</li>
-                                        </StepList>
                                         <ActionRow>
                                             <Button tag="a" href="/payment/success" bg="primary" color="white" hvrBg="secondary">
                                                 Simulate Success
