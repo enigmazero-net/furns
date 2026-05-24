@@ -7,7 +7,7 @@ import {PromoItem, PromoInfo, PromoContent, PromoTitle} from "./promo.style";
 
 const Promo = ({title, content, thumb, slug, className, align}) => {
     return (
-        <Link href={slug} passHref>
+        <Link href={slug} passHref legacyBehavior>
             <PromoItem
                 className={cn(className)}
             >
@@ -17,8 +17,7 @@ const Promo = ({title, content, thumb, slug, className, align}) => {
                         alt={title}
                         width={570}
                         height={290}
-                        layout="responsive"
-                        objectFit="cover"
+                        style={{width: "100%", height: "auto", objectFit: "cover"}}
                     />
                 </figure>
                 <PromoInfo align={align ? align : 'left'}>

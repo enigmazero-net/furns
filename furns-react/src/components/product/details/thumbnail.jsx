@@ -33,9 +33,9 @@ const ProductDetailsThumb = ({thumbnails}) => {
                         <Slide key={image?.node?.id}>
                             <figure>
                                 <Image
-                                    layout="fill"
+                                    fill
                                     alt="furns"
-                                    objectFit="cover"
+                                    style={{objectFit: "cover"}}
                                     src={image?.node?.originalSrc}
                                 />
                             </figure>
@@ -54,7 +54,7 @@ const ProductDetailsThumb = ({thumbnails}) => {
                                         width={108}
                                         height={108}
                                         alt="furns"
-                                        objectFit="cover"
+                                        style={{objectFit: "cover"}}
                                         src={image?.node?.originalSrc}
                                     />
                                 </figure>

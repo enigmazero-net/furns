@@ -37,14 +37,14 @@ const Breadcrumb = ({pageTitle, ...props}) => {
 
                 <BreadcrumbNav>
                     <BreadcrumbNavItem>
-                        <Link href="/" passHref>
+                        <Link href="/" passHref legacyBehavior>
                             <BreadcrumbNavLink>Home</BreadcrumbNavLink>
                         </Link>
                     </BreadcrumbNavItem>
                     {breadcrumbs.map((breadcrumb, i) => (
                         breadcrumbs.length !== (i + 1) ? (
                             <BreadcrumbNavItem key={breadcrumb.breadcrumb}>
-                                <Link href={breadcrumb.href} passHref>
+                                <Link href={breadcrumb.href} passHref legacyBehavior>
                                     <BreadcrumbNavLink>{breadcrumb.breadcrumb}</BreadcrumbNavLink>
                                 </Link>
                             </BreadcrumbNavItem>

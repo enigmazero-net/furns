@@ -11,29 +11,25 @@ const ProductThumbnail = ({product}) => {
     return (
         <ProductImage>
             <Link href={`/product/${handle}`}>
-                <a>
-                    {thumb ? (
-                        <div className="thumb">
-                            <Image
-                                alt={title}
-                                width={270}
-                                height={318}
-                                layout="responsive"
-                                objectFit="cover"
-                                src={thumb.originalSrc}
-                            />
-                        </div>
-                    ) : (
+                {thumb ? (
+                    <div className="thumb">
                         <Image
                             alt={title}
                             width={270}
                             height={318}
-                            layout="responsive"
-                            objectFit="cover"
-                            src={placeholder}
+                            style={{width: "100%", height: "auto", objectFit: "cover"}}
+                            src={thumb.originalSrc}
                         />
-                    )}
-                </a>
+                    </div>
+                ) : (
+                    <Image
+                        alt={title}
+                        width={270}
+                        height={318}
+                        style={{width: "100%", height: "auto", objectFit: "cover"}}
+                        src={placeholder}
+                    />
+                )}
             </Link>
         </ProductImage>
     );

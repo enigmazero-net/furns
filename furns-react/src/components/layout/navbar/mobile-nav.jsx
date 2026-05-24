@@ -74,15 +74,14 @@ const MobileNavbar = ({isOpen, onHandler}) => {
                 <ul>
                     {visibleNav.map(nav => (
                         <li key={nav?.text}>
-                            <Link href={nav?.link}>
-                                <a
-                                    onClick={(event => onNavHandler(event))}
-                                    className={cn({'mm-next-level': nav?.submenu || nav?.mega_menu})}
-                                >
-                                    {nav?.text}
-                                    {(nav?.submenu || nav?.mega_menu) && <CgMathPlus className="plus"/>}
-                                    {(nav?.submenu || nav?.mega_menu) && <CgMathMinus className="minus"/>}
-                                </a>
+                            <Link
+                                href={nav?.link}
+                                onClick={(event => onNavHandler(event))}
+                                className={cn({'mm-next-level': nav?.submenu || nav?.mega_menu})}
+                            >
+                                {nav?.text}
+                                {(nav?.submenu || nav?.mega_menu) && <CgMathPlus className="plus"/>}
+                                {(nav?.submenu || nav?.mega_menu) && <CgMathMinus className="minus"/>}
                             </Link>
                             {nav?.submenu && (
                                 nav?.submenu.map((subitem, idx) => (

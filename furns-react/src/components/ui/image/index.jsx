@@ -18,15 +18,37 @@ const shimmer = (w, h) => `
 
 const toBase64 = (str) => typeof window === 'undefined' ? Buffer.from(str).toString('base64') : window.btoa(str);
 
-const Image = ({src, alt, width, height, ...props}) => {
+const Image = ({
+    src,
+    alt,
+    width,
+    height,
+    fill,
+    layout,
+    objectFit,
+    objectPosition,
+    style,
+    ...props
+}) => {
+    const isFill = fill || layout === "fill";
+    const imageStyle = {
+        ...(layout === "responsive" ? {width: "100%", height: "auto"} : {}),
+        ...(objectFit ? {objectFit} : {}),
+        ...(objectPosition ? {objectPosition} : {}),
+        ...style
+    };
+    const placeholderWidth = width || 700;
+    const placeholderHeight = height || 475;
+
     return (
         <NextImage
             alt={alt}
             src={src}
-            width={width}
-            height={height}
+            {...(!isFill ? {width, height} : {})}
+            {...(isFill ? {fill: true} : {})}
+            style={imageStyle}
             placeholder="blur"
-            blurDataURL={`data:image/svg+xml;base64,${toBase64(shimmer(width, height))}`}
+            blurDataURL={`data:image/svg+xml;base64,${toBase64(shimmer(placeholderWidth, placeholderHeight))}`}
             {...props}
         />
     )

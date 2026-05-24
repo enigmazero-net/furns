@@ -29,7 +29,7 @@ const MiniCartProduct = ({product}) => {
 
     return (
         <MiniCartProductItem>
-            <Link href={`/product/${handle}`} passHref>
+            <Link href={`/product/${handle}`} passHref legacyBehavior>
                 <MiniCartProThumb>
                     <Image
                         alt={name}
@@ -42,7 +42,7 @@ const MiniCartProduct = ({product}) => {
 
             <MiniCartProContent>
                 <div>
-                    <Link href={`/product/${handle}`} passHref>
+                    <Link href={`/product/${handle}`} passHref legacyBehavior>
                         <MiniCartProName>{title}</MiniCartProName>
                     </Link>
 

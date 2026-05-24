@@ -11,24 +11,21 @@ const Post = ({post, className, ...props}) => {
 
     return (
         <PostItem className={cn(className)} {...props}>
-            <Link href={`/blog/${handle}`} passHref>
-                <a>
-                    <Image
-                        alt={title}
-                        width={400}
-                        height={250}
-                        layout="responsive"
-                        objectFit="cover"
-                        src={image?.originalSrc}
-                    />
-                </a>
+            <Link href={`/blog/${handle}`}>
+                <Image
+                    alt={title}
+                    width={400}
+                    height={250}
+                    style={{width: "100%", height: "auto", objectFit: "cover"}}
+                    src={image?.originalSrc}
+                />
             </Link>
 
             <PostContent>
                 <PostTitle><Link href={`/blog/${handle}`}>{title}</Link></PostTitle>
 
                 <PostMeta>
-                    By <Link href={`/blog/${handle}`}><a>{authorV2?.name},</a></Link>
+                    By <Link href={`/blog/${handle}`}>{authorV2?.name},</Link>
                     <Link href={`/blog/${handle}`}>{formatDate(publishedAt)}</Link>
                 </PostMeta>
 

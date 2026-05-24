@@ -39,15 +39,13 @@ const Logo = ({width, height, src, className}) => {
     return (
         <LogoWrap width={width} height={height} className={cn(className)}>
             <Link href="/">
-                <a>
-                    <Image
-                        src={src}
-                        layout="fill"
-                        loading="eager"
-                        alt={settings.title}
-                        objectFit="contain"
-                    />
-                </a>
+                <Image
+                    src={src}
+                    fill
+                    loading="eager"
+                    alt={settings.title}
+                    style={{objectFit: "contain"}}
+                />
             </Link>
         </LogoWrap>
     );

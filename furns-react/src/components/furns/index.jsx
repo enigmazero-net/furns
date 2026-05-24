@@ -52,7 +52,7 @@ export const OrdersTable = ({orders, admin = false}) => (
                         <td>${order.total.toFixed(2)}</td>
                         <td>
                             <Link href={admin ? `/admin/orders/${order.id}` : `/account/orders/${order.id}`}>
-                                <a>View</a>
+                                View
                             </Link>
                         </td>
                     </tr>

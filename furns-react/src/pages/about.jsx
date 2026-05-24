@@ -34,7 +34,7 @@ const AboutPage = () => {
                                     width={950}
                                     height={600}
                                     alt={settings?.title}
-                                    objectFit="cover"
+                                    style={{objectFit: "cover"}}
                                     src="/images/furniture/couch_1.jpeg"
                                 />
                             </figure>
@@ -46,7 +46,7 @@ const AboutPage = () => {
                                     width={950}
                                     height={600}
                                     alt={settings?.title}
-                                    objectFit="cover"
+                                    style={{objectFit: "cover"}}
                                     src="/images/furniture/bed_3.jpeg"
                                 />
                             </figure>

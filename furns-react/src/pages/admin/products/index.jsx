@@ -76,7 +76,7 @@ const AdminProductsPage = ({products}) => (
                                                 <td><StatusPill variant={statusVariant(product.status)}>{product.status}</StatusPill></td>
                                                 <td>
                                                     <Link href={`/admin/products/${product.id}/edit`}>
-                                                        <a>Edit</a>
+                                                        Edit
                                                     </Link>
                                                 </td>
                                             </tr>

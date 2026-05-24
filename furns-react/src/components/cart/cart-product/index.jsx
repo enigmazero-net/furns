@@ -34,18 +34,17 @@ const CartItem = ({product}) => {
     return (
         <SingleCartItem>
             <CartProThumb>
-                <Link href={`/product/${handle}`}>
-                    <a className="d-block">
-                        <Image
-                            width={150}
-                            height={150}
-                            src={images?.edges[0]?.node?.originalSrc}
-                        />
-                    </a>
+                <Link href={`/product/${handle}`} className="d-block">
+                    <Image
+                        alt={title}
+                        width={150}
+                        height={150}
+                        src={images?.edges[0]?.node?.originalSrc}
+                    />
                 </Link>
             </CartProThumb>
             <CartProInfo>
-                <Link href={`/product/${handle}`} passHref>
+                <Link href={`/product/${handle}`} passHref legacyBehavior>
                     <CartProName>{title}</CartProName>
                 </Link>
 

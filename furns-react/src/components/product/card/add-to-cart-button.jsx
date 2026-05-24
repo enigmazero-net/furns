@@ -41,7 +41,7 @@ const AddToCartButton = ({isShowInMobile, product}) => {
 
     return (
         variants?.edges?.length > 1 ? (
-            <Link href={`/product/${handle}`} passHref>
+            <Link href={`/product/${handle}`} passHref legacyBehavior>
                 <SelectOptionButton mobile={isShowInMobile}>
                     <IoIosCart/> Select Options
                 </SelectOptionButton>

@@ -6,14 +6,14 @@ import {CategoryItem, CatItemInner, CatName} from "./category.style";
 
 const Category = ({category, icon, slug}) => {
     return (
-        <Link href={slug} passHref>
+        <Link href={slug} passHref legacyBehavior>
             <CategoryItem>
                 <CatItemInner>
                     <Image
                         width={78}
                         height={78}
                         alt={category}
-                        objectFit="cover"
+                        style={{objectFit: "cover"}}
                         src={icon ? icon : placeholder}
                     />
                     <CatName>{category}</CatName>

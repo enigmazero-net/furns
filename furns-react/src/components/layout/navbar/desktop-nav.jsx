@@ -40,10 +40,8 @@ const DesktopNav = ({bg, className}) => {
                                 {visibleNav.map((navItem, index) => (
                                     <li key={index} className={navItem.submenu ? "dropdown" : undefined}>
                                         <Link href={navItem.link}>
-                                            <a>
-                                                {navItem.text}
-                                                {navItem.submenu && <IoIosArrowDown/>}
-                                            </a>
+                                            {navItem.text}
+                                            {navItem.submenu && <IoIosArrowDown/>}
                                         </Link>
 
                                         {navItem.submenu && (

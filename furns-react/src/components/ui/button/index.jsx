@@ -17,7 +17,7 @@ const Button = ({ tag, children, href, loading, ...props }) => {
   return (
     <Fragment>
       {tag === "a" && (
-        <Link href={href} passHref>
+        <Link href={href} passHref legacyBehavior>
           <StyledLink {...props}>
             {children}
             {loading && (
