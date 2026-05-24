@@ -2,10 +2,9 @@ import cn from "classnames";
 import PropTypes from "prop-types";
 import {SliderWrap} from "./swiper.style";
 import {Swiper, SwiperSlide} from 'swiper/react';
-import SwiperCore, {Navigation, Pagination, Thumbs, EffectFade} from "swiper";
+import {Autoplay, EffectFade, FreeMode, Navigation, Pagination, Thumbs} from "swiper/modules";
 
-// install Swiper modules
-SwiperCore.use([Navigation, Pagination, Thumbs, EffectFade]);
+const modules = [Autoplay, EffectFade, FreeMode, Navigation, Pagination, Thumbs];
 
 const Slider = ({children, animate, settings, className}) => {
     const sliderOptions = {
@@ -21,7 +20,13 @@ const Slider = ({children, animate, settings, className}) => {
             dots={sliderOptions?.pagination}
             arrows={sliderOptions?.navigation}
         >
-            <Swiper {...sliderOptions} className={cn(className)}>{children}</Swiper>
+            <Swiper
+                modules={modules}
+                {...sliderOptions}
+                className={cn(className)}
+            >
+                {children}
+            </Swiper>
         </SliderWrap>
     );
 };

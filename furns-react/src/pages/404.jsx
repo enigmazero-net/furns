@@ -3,7 +3,6 @@ import {useRouter} from "next/router";
 import Image from "@components/ui/image";
 import settings from "@data/settings.json";
 import Button from "@components/ui/button";
-import thumb from "/public/images/error.png"
 import {ErrorPage} from "@assets/css/global.style";
 
 const Error404Page = () => {
@@ -19,7 +18,7 @@ const Error404Page = () => {
             <ErrorPage>
                 <div>
                     <Image
-                        src={thumb}
+                        src="/images/error.png"
                         width={320}
                         height={115}
                         alt="Furns 404 Error Page"
