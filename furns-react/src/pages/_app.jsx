@@ -7,6 +7,7 @@ import { store } from "@global/store";
 import { GlobalStyle } from "@assets/css/global.style";
 
 // CSS import
+import "bootstrap/dist/css/bootstrap.min.css";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
