@@ -27,6 +27,7 @@ const Image = ({
     layout,
     objectFit,
     objectPosition,
+    sizes,
     style,
     ...props
 }) => {
@@ -46,6 +47,7 @@ const Image = ({
             src={src}
             {...(!isFill ? {width, height} : {})}
             {...(isFill ? {fill: true} : {})}
+            {...(isFill && !sizes ? {sizes: "100vw"} : {sizes})}
             style={imageStyle}
             placeholder="blur"
             blurDataURL={`data:image/svg+xml;base64,${toBase64(shimmer(placeholderWidth, placeholderHeight))}`}

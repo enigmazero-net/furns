@@ -1,5 +1,6 @@
 import {theme} from "./theme";
 import {themeGet} from "@styled-system/theme-get";
+import {border, color, layout, space, typography} from "styled-system";
 import styled, {createGlobalStyle, css, keyframes, ThemeProvider, ServerStyleSheet} from "styled-components";
 
 export const devices = {
@@ -18,8 +19,12 @@ export {
     keyframes,
     ThemeProvider,
     ServerStyleSheet,
-    createGlobalStyle
+    createGlobalStyle,
+    border,
+    color,
+    layout,
+    space,
+    typography
 };
 
-export * from "styled-system";
 export default styled;

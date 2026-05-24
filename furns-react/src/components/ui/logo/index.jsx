@@ -35,26 +35,21 @@ const LogoWrap = styled.div`
   }
 `
 
-const Logo = ({width, height, src, className}) => {
+const Logo = ({width = 172, height = 40, src, className}) => {
     return (
         <LogoWrap width={width} height={height} className={cn(className)}>
             <Link href="/">
                 <Image
                     src={src}
-                    fill
+                    width={width}
+                    height={height}
                     loading="eager"
                     alt={settings.title}
-                    style={{objectFit: "contain"}}
                 />
             </Link>
         </LogoWrap>
     );
 };
-
-Logo.defaultProps = {
-    width: 172,
-    height: 40
-}
 
 Logo.propTypes = {
     width: PropTypes.number,
