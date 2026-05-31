@@ -35,8 +35,8 @@ const getKeycloakUrl = () => {
         throw new Error("NEXT_PUBLIC_KEYCLOAK_URL is required.");
     }
 
-    if (keycloakUrl.startsWith("http://") && !allowInsecureKeycloak) {
-        throw new Error("NEXT_PUBLIC_KEYCLOAK_URL must use HTTPS unless NEXT_PUBLIC_ALLOW_INSECURE_KEYCLOAK=true is set.");
+    if (keycloakUrl.startsWith("http://") && !allowInsecureKeycloak && isBrowser()) {
+        console.warn("NEXT_PUBLIC_KEYCLOAK_URL is using HTTP. Use HTTPS before production.");
     }
 
     return keycloakUrl.replace(/\/+$/, "");
