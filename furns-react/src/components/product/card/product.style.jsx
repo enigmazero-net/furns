@@ -275,11 +275,17 @@ export const ProductImage = styled.div`
   width: 100%;
 
   .thumb {
+    position: relative;
     z-index: 1;
+    display: block;
     max-width: 100%;
+    aspect-ratio: 270 / 318;
+    overflow: hidden;
+    background-color: ${themeGet('colors.borderLight')};
 
     img {
       object-position: center;
+      transition: ${themeGet('transition')};
     }
 
     &.hover-image {
