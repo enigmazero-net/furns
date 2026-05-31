@@ -2,13 +2,13 @@ import Head from "next/head";
 import {useEffect, useState} from "react";
 import settings from "@data/settings";
 import Layout from "@components/layout";
+import AuthGuard from "@components/auth/guard";
 import Breadcrumb from "@components/ui/breadcrumb";
 import {getOrders, normalizeOrder} from "@services/api";
 import {getAccessToken} from "@services/auth";
 import {Col, Container, Row} from "@bootstrap";
 import {OrdersTable} from "@components/furns";
-import {mockOrders} from "@data/furns";
-import {FurnsPanel, PageContent, PanelSubtitle, PanelTitle} from "@components/furns/furns.style";
+import {FurnsPanel, MutedText, PageContent, PanelSubtitle, PanelTitle} from "@components/furns/furns.style";
 
 const toArray = (data) => {
     if (Array.isArray(data)) return data;
@@ -18,18 +18,24 @@ const toArray = (data) => {
 };
 
 const OrdersPage = () => {
-    const [orders, setOrders] = useState(mockOrders);
+    const [orders, setOrders] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
 
     useEffect(() => {
         const token = getAccessToken();
-        if (!token) return;
+        if (!token) {
+            setLoading(false);
+            return;
+        }
 
         getOrders(token)
             .then((data) => {
                 const nextOrders = toArray(data).map(normalizeOrder);
-                if (nextOrders.length) setOrders(nextOrders);
+                setOrders(nextOrders);
             })
-            .catch(() => {});
+            .catch((err) => setError(err.message || "Unable to load orders."))
+            .finally(() => setLoading(false));
     }, []);
 
     return (
@@ -42,17 +48,22 @@ const OrdersPage = () => {
 
             <PageContent>
                 <Container>
-                    <Row>
-                        <Col lg={12}>
-                            <FurnsPanel>
-                                <PanelTitle>Customer Orders</PanelTitle>
-                                <PanelSubtitle>
-                                    This page reads order status through the Order Management Service after login.
-                                </PanelSubtitle>
-                                <OrdersTable orders={orders}/>
-                            </FurnsPanel>
-                        </Col>
-                    </Row>
+                    <AuthGuard returnTo="/account/orders">
+                        <Row>
+                            <Col lg={12}>
+                                <FurnsPanel>
+                                    <PanelTitle>Customer Orders</PanelTitle>
+                                    <PanelSubtitle>
+                                        This page reads order status through the Order Management Service after login.
+                                    </PanelSubtitle>
+                                    {loading && <MutedText>Loading your orders.</MutedText>}
+                                    {!loading && error && <MutedText>{error}</MutedText>}
+                                    {!loading && !error && orders.length > 0 && <OrdersTable orders={orders}/>}
+                                    {!loading && !error && orders.length === 0 && <MutedText>No orders are available for this account.</MutedText>}
+                                </FurnsPanel>
+                            </Col>
+                        </Row>
+                    </AuthGuard>
                 </Container>
             </PageContent>
         </Layout>

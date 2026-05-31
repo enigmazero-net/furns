@@ -2,16 +2,17 @@ import Head from "next/head";
 import {useEffect, useState} from "react";
 import settings from "@data/settings";
 import Layout from "@components/layout";
+import AuthGuard from "@components/auth/guard";
 import Button from "@components/ui/button";
 import Breadcrumb from "@components/ui/breadcrumb";
 import {getMe, normalizeUser} from "@services/api";
 import {getAccessToken, getUserProfile} from "@services/auth";
 import {Col, Container, Row} from "@bootstrap";
 import {Metrics} from "@components/furns";
-import {mockOrders, mockUser} from "@data/furns";
 import {
     ActionRow,
     FurnsPanel,
+    MutedText,
     PageContent,
     PanelSubtitle,
     PanelTitle,
@@ -19,7 +20,9 @@ import {
 } from "@components/furns/furns.style";
 
 const AccountPage = () => {
-    const [user, setUser] = useState(mockUser);
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
 
     useEffect(() => {
         const token = getAccessToken();
@@ -27,11 +30,15 @@ const AccountPage = () => {
         if (tokenProfile) {
             setUser(normalizeUser(tokenProfile));
         }
-        if (!token) return;
+        if (!token) {
+            setLoading(false);
+            return;
+        }
 
         getMe(token)
             .then((data) => setUser(normalizeUser(data)))
-            .catch(() => {});
+            .catch((err) => setError(err.message || "Unable to load account details."))
+            .finally(() => setLoading(false));
     }, []);
 
     return (
@@ -44,44 +51,50 @@ const AccountPage = () => {
 
             <PageContent>
                 <Container>
-                    <FurnsPanel>
-                        <PanelTitle>Customer Profile</PanelTitle>
-                        <SummaryList>
-                            <dt>Name</dt>
-                            <dd>{user.name}</dd>
-                            <dt>Email</dt>
-                            <dd>{user.email}</dd>
-                            <dt>Role</dt>
-                            <dd>{user.role}</dd>
-                        </SummaryList>
-                        <ActionRow>
-                            <Button tag="a" href="/account/orders" bg="primary" color="white" hvrBg="secondary">
-                                View Orders
-                            </Button>
-                            <Button tag="a" href="/checkout" bg="secondary" color="white" hvrBg="primary">
-                                Checkout
-                            </Button>
-                        </ActionRow>
-                    </FurnsPanel>
+                    <AuthGuard returnTo="/account">
+                        <FurnsPanel>
+                            <PanelTitle>Customer Profile</PanelTitle>
+                            {loading && <MutedText>Loading your account.</MutedText>}
+                            {!loading && error && <MutedText>{error}</MutedText>}
+                            {!loading && !error && user && (
+                                <SummaryList>
+                                    <dt>Name</dt>
+                                    <dd>{user.name}</dd>
+                                    <dt>Email</dt>
+                                    <dd>{user.email}</dd>
+                                    <dt>Role</dt>
+                                    <dd>{user.role}</dd>
+                                </SummaryList>
+                            )}
+                            <ActionRow>
+                                <Button tag="a" href="/account/orders" bg="primary" color="white" hvrBg="secondary">
+                                    View Orders
+                                </Button>
+                                <Button tag="a" href="/checkout" bg="secondary" color="white" hvrBg="primary">
+                                    Checkout
+                                </Button>
+                            </ActionRow>
+                        </FurnsPanel>
 
-                    <Row>
-                        <Col lg={12}>
-                            <FurnsPanel>
-                                <PanelTitle>Account Activity</PanelTitle>
-                                <PanelSubtitle>
-                                    The account area represents authenticated frontend requests to internal order services.
-                                </PanelSubtitle>
-                                <Metrics
-                                    items={[
-                                        {label: "Orders", value: mockOrders.length},
-                                        {label: "Latest Order", value: mockOrders[0].id},
-                                        {label: "Payment Status", value: "Authorized"},
-                                        {label: "Notifications", value: "Queued"},
-                                    ]}
-                                />
-                            </FurnsPanel>
-                        </Col>
-                    </Row>
+                        <Row>
+                            <Col lg={12}>
+                                <FurnsPanel>
+                                    <PanelTitle>Account Activity</PanelTitle>
+                                    <PanelSubtitle>
+                                        The account area represents authenticated frontend requests to internal order services.
+                                    </PanelSubtitle>
+                                    <Metrics
+                                        items={[
+                                            {label: "Profile", value: user ? "Loaded" : "Pending"},
+                                            {label: "Orders", value: "Private"},
+                                            {label: "Payment Status", value: "Private"},
+                                            {label: "Notifications", value: "Private"},
+                                        ]}
+                                    />
+                                </FurnsPanel>
+                            </Col>
+                        </Row>
+                    </AuthGuard>
                 </Container>
             </PageContent>
         </Layout>

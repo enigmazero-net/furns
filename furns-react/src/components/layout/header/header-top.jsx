@@ -18,7 +18,7 @@ const HeaderTop = ({className}) => {
                     <Col md={7} lg={9}>
                         <HeaderTopSetLanCurr className="mt-2 mt-md-0">
                             <Link href="/checkout">Checkout</Link>
-                            <Link href="/admin/audit-logs">Audit Logs</Link>
+                            <Link href="/account/orders">Orders</Link>
                         </HeaderTopSetLanCurr>
                     </Col>
                 </Row>

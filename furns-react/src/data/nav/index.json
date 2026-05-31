@@ -60,33 +60,6 @@
     "mega_menu": false
   },
   {
-    "text": "Admin",
-    "link": "/admin",
-    "submenu": [
-      {
-        "list": [
-          {
-            "text": "Admin Login",
-            "link": "/admin/login"
-          },
-          {
-            "text": "Orders",
-            "link": "/admin/orders"
-          },
-          {
-            "text": "Products",
-            "link": "/admin/products"
-          },
-          {
-            "text": "Audit Logs",
-            "link": "/admin/audit-logs"
-          }
-        ]
-      }
-    ],
-    "mega_menu": false
-  },
-  {
     "text": "More",
     "link": "/collection/office",
     "submenu": [

@@ -5,8 +5,20 @@ import {
     getProducts as getFallbackProducts,
 } from "@data/catalog";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://178.105.114.143/api";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "";
 const placeholderImage = "/images/logo/logo.png";
+
+const getApiBaseUrl = () => {
+    if (!API_BASE_URL) {
+        throw new Error("NEXT_PUBLIC_API_BASE_URL is required.");
+    }
+
+    if (API_BASE_URL.startsWith("http://")) {
+        throw new Error("NEXT_PUBLIC_API_BASE_URL must use HTTPS.");
+    }
+
+    return API_BASE_URL.replace(/\/+$/, "");
+};
 
 const edge = (node) => ({node});
 
@@ -45,7 +57,7 @@ const errorMessage = (data, text, status) => {
 };
 
 export const apiFetch = async (path, options = {}) => {
-    const response = await fetch(`${API_BASE_URL}${path}`, {
+    const response = await fetch(`${getApiBaseUrl()}${path}`, {
         ...options,
         headers: {
             Accept: "application/json",

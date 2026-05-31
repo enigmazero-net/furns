@@ -1,7 +1,7 @@
-const AUTH_STORAGE_KEY = "furns-auth";
+const AUTH_STORAGE_KEY = "furns-session";
 const PKCE_STORAGE_KEY = "furns-pkce";
 
-const keycloakUrl = process.env.NEXT_PUBLIC_KEYCLOAK_URL || "http://178.105.114.143/keycloak";
+const keycloakUrl = process.env.NEXT_PUBLIC_KEYCLOAK_URL || "";
 const keycloakRealm = process.env.NEXT_PUBLIC_KEYCLOAK_REALM || "online-store";
 const keycloakClientId = process.env.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID || "online-store-app";
 const adminRoles = (process.env.NEXT_PUBLIC_ADMIN_ROLES || "admin,administrator")
@@ -10,6 +10,23 @@ const adminRoles = (process.env.NEXT_PUBLIC_ADMIN_ROLES || "admin,administrator"
     .filter(Boolean);
 
 const isBrowser = () => typeof window !== "undefined";
+
+const getBrowserStorage = () => {
+    if (!isBrowser()) return null;
+    return window.sessionStorage;
+};
+
+const getKeycloakUrl = () => {
+    if (!keycloakUrl) {
+        throw new Error("NEXT_PUBLIC_KEYCLOAK_URL is required.");
+    }
+
+    if (keycloakUrl.startsWith("http://")) {
+        throw new Error("NEXT_PUBLIC_KEYCLOAK_URL must use HTTPS.");
+    }
+
+    return keycloakUrl.replace(/\/+$/, "");
+};
 
 const base64UrlEncode = (value) => {
     const bytes = value instanceof ArrayBuffer ? new Uint8Array(value) : value;
@@ -131,7 +148,7 @@ export const getAccessToken = () => {
     if (!isBrowser()) return null;
 
     try {
-        const auth = JSON.parse(window.localStorage.getItem(AUTH_STORAGE_KEY) || "null");
+        const auth = JSON.parse(getBrowserStorage()?.getItem(AUTH_STORAGE_KEY) || "null");
         if (auth?.expires_at && Number(auth.expires_at) <= Date.now()) {
             clearAuthState();
             return null;
@@ -148,7 +165,7 @@ export const getAuthState = () => {
     if (!isBrowser()) return null;
 
     try {
-        return JSON.parse(window.localStorage.getItem(AUTH_STORAGE_KEY) || "null");
+        return JSON.parse(getBrowserStorage()?.getItem(AUTH_STORAGE_KEY) || "null");
     } catch {
         return null;
     }
@@ -156,8 +173,8 @@ export const getAuthState = () => {
 
 export const clearAuthState = () => {
     if (!isBrowser()) return;
-    window.localStorage.removeItem(AUTH_STORAGE_KEY);
-    window.localStorage.removeItem(PKCE_STORAGE_KEY);
+    getBrowserStorage()?.removeItem(AUTH_STORAGE_KEY);
+    getBrowserStorage()?.removeItem(PKCE_STORAGE_KEY);
 };
 
 export const authHeaders = () => {
@@ -173,7 +190,7 @@ const startKeycloakFlow = async (redirectPath, endpoint = "auth") => {
     const challenge = await createCodeChallenge(verifier);
     const redirectUri = `${window.location.origin}/auth/callback`;
 
-    window.localStorage.setItem(PKCE_STORAGE_KEY, JSON.stringify({
+    getBrowserStorage()?.setItem(PKCE_STORAGE_KEY, JSON.stringify({
         state,
         verifier,
         redirectPath,
@@ -189,7 +206,7 @@ const startKeycloakFlow = async (redirectPath, endpoint = "auth") => {
         code_challenge_method: "S256",
     });
 
-    window.location.assign(`${keycloakUrl}/realms/${keycloakRealm}/protocol/openid-connect/${endpoint}?${params}`);
+    window.location.assign(`${getKeycloakUrl()}/realms/${keycloakRealm}/protocol/openid-connect/${endpoint}?${params}`);
 };
 
 export const loginWithKeycloak = (redirectPath = "/account") => startKeycloakFlow(redirectPath, "auth");
@@ -199,7 +216,7 @@ export const registerWithKeycloak = (redirectPath = "/account") => startKeycloak
 export const exchangeKeycloakCode = async ({code, state}) => {
     if (!isBrowser()) throw new Error("Authentication callback must run in the browser.");
 
-    const pkce = JSON.parse(window.localStorage.getItem(PKCE_STORAGE_KEY) || "null");
+    const pkce = JSON.parse(getBrowserStorage()?.getItem(PKCE_STORAGE_KEY) || "null");
     if (!pkce?.verifier || pkce.state !== state) {
         throw new Error("Invalid authentication state.");
     }
@@ -212,7 +229,7 @@ export const exchangeKeycloakCode = async ({code, state}) => {
         code_verifier: pkce.verifier,
     });
 
-    const response = await fetch(`${keycloakUrl}/realms/${keycloakRealm}/protocol/openid-connect/token`, {
+    const response = await fetch(`${getKeycloakUrl()}/realms/${keycloakRealm}/protocol/openid-connect/token`, {
         method: "POST",
         headers: {
             "Content-Type": "application/x-www-form-urlencoded",
@@ -226,12 +243,12 @@ export const exchangeKeycloakCode = async ({code, state}) => {
     }
 
     const auth = await response.json();
-    window.localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify({
+    getBrowserStorage()?.setItem(AUTH_STORAGE_KEY, JSON.stringify({
         ...auth,
         expires_at: Date.now() + (Number(auth.expires_in || 0) * 1000),
     }));
 
-    window.localStorage.removeItem(PKCE_STORAGE_KEY);
+    getBrowserStorage()?.removeItem(PKCE_STORAGE_KEY);
     return {auth, redirectPath: pkce.redirectPath || "/account"};
 };
 

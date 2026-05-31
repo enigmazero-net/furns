@@ -2,14 +2,16 @@ import Link from "next/link";
 import {useEffect, useState} from "react";
 import Widget from "@components/ui/widget";
 import {Container, Col, Row, Ul, Li,} from "@bootstrap";
-import {isSignedIn} from "@services/auth";
+import {isAdminUser, isSignedIn} from "@services/auth";
 import {WidgetWrapper} from "./footer.style";
 
 const FooterWidget = (props) => {
     const [signedIn, setSignedIn] = useState(null);
+    const [adminUser, setAdminUser] = useState(false);
 
     useEffect(() => {
         setSignedIn(isSignedIn());
+        setAdminUser(isAdminUser());
     }, []);
 
     return (
@@ -25,8 +27,8 @@ const FooterWidget = (props) => {
                             mb={[30, null, null, 0]}
                         >
                             <p className="about-text">
-                                Furns is configured as a security storefront with customer checkout,
-                                mock payment, admin management, and audit-log screens.
+                                Furns is configured as a security storefront with customer checkout
+                                and account order history.
                             </p>
                         </Widget>
                     </Col>
@@ -50,28 +52,26 @@ const FooterWidget = (props) => {
                         </Widget>
                     </Col>
 
-                    <Col sm={6} lg={2}>
-                        <Widget
-                            title="ADMIN"
-                            mb={[30, null, null, 0]}
-                        >
-                            <Ul className="widget-list">
-                                <Li><Link href="/admin/login">Admin Login</Link></Li>
-                                <Li><Link href="/admin/orders">Orders</Link></Li>
-                                <Li><Link href="/admin/products">Products</Link></Li>
-                                <Li><Link href="/admin/audit-logs">Audit Logs</Link></Li>
-                            </Ul>
-                        </Widget>
-                    </Col>
+                    {adminUser && (
+                        <Col sm={6} lg={2}>
+                            <Widget
+                                title="ADMIN"
+                                mb={[30, null, null, 0]}
+                            >
+                                <Ul className="widget-list">
+                                    <Li><Link href="/admin">Dashboard</Link></Li>
+                                </Ul>
+                            </Widget>
+                        </Col>
+                    )}
 
                     <Col sm={6} lg={3}>
                         <Widget
-                            title="EXTERNAL MOCKS"
+                            title="SUPPORT"
                         >
                             <Ul className="widget-list">
-                                <Li><Link href="/checkout">Checkout</Link></Li>
-                                <Li><Link href="/payment/success">Payment Success</Link></Li>
-                                <Li><Link href="/payment/failed">Payment Failure</Link></Li>
+                                <Li><Link href="/contact">Contact</Link></Li>
+                                <Li><Link href="/about">About</Link></Li>
                             </Ul>
                         </Widget>
                     </Col>

@@ -8,7 +8,7 @@ import { HiOutlineShoppingBag } from "react-icons/hi";
 import { getCartProductsQuantity } from "@utils/product";
 import { AiOutlineMenu, AiOutlineSetting } from "react-icons/ai";
 import { IoPersonOutline, IoSearchOutline } from "react-icons/io5";
-import {isSignedIn} from "@services/auth";
+import {isAdminUser, isSignedIn} from "@services/auth";
 import {
   DropdownMenu,
   DropdownToggleButton,
@@ -29,11 +29,13 @@ const HeaderBottom = ({
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [signedIn, setSignedIn] = useState(null);
+  const [adminUser, setAdminUser] = useState(false);
   const shoppingCart = useSelector((state) => state.shoppingCart);
   const cartQuantity = getCartProductsQuantity(shoppingCart);
 
   useEffect(() => {
     setSignedIn(isSignedIn());
+    setAdminUser(isAdminUser());
   }, []);
 
   return (
@@ -112,9 +114,11 @@ const HeaderBottom = ({
                   <li>
                     <Link href="/cart">Cart</Link>
                   </li>
-                  <li>
-                    <Link href="/admin">Admin</Link>
-                  </li>
+                  {adminUser && (
+                    <li>
+                      <Link href="/admin">Admin</Link>
+                    </li>
+                  )}
                 </DropdownMenu>
               </ActionItem>
 

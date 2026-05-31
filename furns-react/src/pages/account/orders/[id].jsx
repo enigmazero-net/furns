@@ -3,16 +3,17 @@ import {useRouter} from "next/router";
 import {useEffect, useState} from "react";
 import settings from "@data/settings";
 import Layout from "@components/layout";
+import AuthGuard from "@components/auth/guard";
 import Breadcrumb from "@components/ui/breadcrumb";
 import {getOrder, normalizeOrder} from "@services/api";
 import {getAccessToken} from "@services/auth";
 import {Col, Container, Row} from "@bootstrap";
 import {statusVariant} from "@components/furns";
-import {getMockOrder} from "@data/furns";
 import {
     FurnsPanel,
     FurnsTable,
     FurnsTableWrap,
+    MutedText,
     PageContent,
     PanelSubtitle,
     PanelTitle,
@@ -22,80 +23,97 @@ import {
 
 const OrderDetailsPage = () => {
     const router = useRouter();
-    const [order, setOrder] = useState(getMockOrder(router.query.id));
+    const [order, setOrder] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
 
     useEffect(() => {
         if (!router.isReady) return;
 
-        const nextOrder = getMockOrder(router.query.id);
-        setOrder(nextOrder);
-
         const token = getAccessToken();
-        if (!token) return;
+        if (!token) {
+            setLoading(false);
+            return;
+        }
 
+        setLoading(true);
+        setError("");
+        setOrder(null);
         getOrder(token, router.query.id)
             .then((data) => setOrder(normalizeOrder(data)))
-            .catch(() => {});
+            .catch((err) => setError(err.message || "Unable to load this order."))
+            .finally(() => setLoading(false));
     }, [router.isReady, router.query.id]);
+
+    const pageTitle = order?.id || "Order Details";
 
     return (
         <Layout>
             <Head>
-                <title>{`${order.id} :: ${settings?.title}`}</title>
+                <title>{`${pageTitle} :: ${settings?.title}`}</title>
             </Head>
 
-            <Breadcrumb py={[40, 80]} mb={[60, null, 100]} pageTitle={order.id}/>
+            <Breadcrumb py={[40, 80]} mb={[60, null, 100]} pageTitle={pageTitle}/>
 
             <PageContent>
                 <Container>
-                    <Row>
-                        <Col lg={12}>
-                            <FurnsPanel>
-                                <PanelTitle>Order Details</PanelTitle>
-                                <PanelSubtitle>
-                                    Payment, order, and notification status stay separate so the gateway webhook can update the order later.
-                                </PanelSubtitle>
-                                <SummaryList>
-                                    <dt>Order Status</dt>
-                                    <dd><StatusPill variant={statusVariant(order.status)}>{order.status}</StatusPill></dd>
-                                    <dt>Payment Status</dt>
-                                    <dd>{order.paymentStatus}</dd>
-                                    <dt>Gateway Reference</dt>
-                                    <dd>{order.gatewayReference}</dd>
-                                    <dt>Notification Status</dt>
-                                    <dd>{order.notificationStatus}</dd>
-                                    <dt>Shipping Address</dt>
-                                    <dd>{order.shippingAddress}</dd>
-                                </SummaryList>
-                            </FurnsPanel>
+                    <AuthGuard returnTo={router.asPath}>
+                        <Row>
+                            <Col lg={12}>
+                                <FurnsPanel>
+                                    <PanelTitle>Order Details</PanelTitle>
+                                    <PanelSubtitle>
+                                        Payment, order, and notification status stay separate so the gateway webhook can update the order later.
+                                    </PanelSubtitle>
+                                    {loading && <MutedText>Loading this order.</MutedText>}
+                                    {!loading && error && <MutedText>{error}</MutedText>}
+                                    {!loading && !error && !order && <MutedText>This order is not available for this account.</MutedText>}
+                                    {!loading && !error && order && (
+                                        <SummaryList>
+                                            <dt>Order Status</dt>
+                                            <dd><StatusPill variant={statusVariant(order.status)}>{order.status}</StatusPill></dd>
+                                            <dt>Payment Status</dt>
+                                            <dd>{order.paymentStatus}</dd>
+                                            <dt>Gateway Reference</dt>
+                                            <dd>{order.gatewayReference}</dd>
+                                            <dt>Notification Status</dt>
+                                            <dd>{order.notificationStatus}</dd>
+                                            <dt>Shipping Address</dt>
+                                            <dd>{order.shippingAddress}</dd>
+                                        </SummaryList>
+                                    )}
+                                </FurnsPanel>
 
-                            <FurnsPanel>
-                                <PanelTitle>Items</PanelTitle>
-                                <FurnsTableWrap>
-                                    <FurnsTable>
-                                        <thead>
-                                            <tr>
-                                                <th>Product</th>
-                                                <th>Qty</th>
-                                                <th>Price</th>
-                                                <th>Subtotal</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {order.items.map((item) => (
-                                                <tr key={item.name}>
-                                                    <td>{item.name}</td>
-                                                    <td>{item.quantity}</td>
-                                                    <td>${item.price.toFixed(2)}</td>
-                                                    <td>${(item.price * item.quantity).toFixed(2)}</td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </FurnsTable>
-                                </FurnsTableWrap>
-                            </FurnsPanel>
-                        </Col>
-                    </Row>
+                                {order && (
+                                    <FurnsPanel>
+                                        <PanelTitle>Items</PanelTitle>
+                                        <FurnsTableWrap>
+                                            <FurnsTable>
+                                                <thead>
+                                                    <tr>
+                                                        <th>Product</th>
+                                                        <th>Qty</th>
+                                                        <th>Price</th>
+                                                        <th>Subtotal</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {order.items.map((item) => (
+                                                        <tr key={item.name}>
+                                                            <td>{item.name}</td>
+                                                            <td>{item.quantity}</td>
+                                                            <td>${item.price.toFixed(2)}</td>
+                                                            <td>${(item.price * item.quantity).toFixed(2)}</td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </FurnsTable>
+                                        </FurnsTableWrap>
+                                    </FurnsPanel>
+                                )}
+                            </Col>
+                        </Row>
+                    </AuthGuard>
                 </Container>
             </PageContent>
         </Layout>

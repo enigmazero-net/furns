@@ -51,14 +51,7 @@ const PaymentProcessingPage = () => {
                                 </PanelSubtitle>
                                 {hasToken === true ? (
                                     <>
-                                        <ActionRow>
-                                            <Button tag="a" href="/payment/success" bg="primary" color="white" hvrBg="secondary">
-                                                Simulate Success
-                                            </Button>
-                                            <Button tag="a" href="/payment/failed" bg="secondary" color="white" hvrBg="primary">
-                                                Simulate Failure
-                                            </Button>
-                                        </ActionRow>
+                                        <MutedText>Waiting for the payment gateway to return the payment result.</MutedText>
                                         <MutedText>No card fields are stored in the frontend.</MutedText>
                                     </>
                                 ) : hasToken === false ? (

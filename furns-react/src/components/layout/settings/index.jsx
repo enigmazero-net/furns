@@ -2,15 +2,17 @@ import Link from "next/link";
 import {useEffect, useState} from "react";
 import Logo from "@components/ui/logo";
 import OffCanvas from "@components/ui/offCanvas";
-import {isSignedIn} from "@services/auth";
+import {isAdminUser, isSignedIn} from "@services/auth";
 import {OffCanvasCloseBtn, OffCanvasHead} from "@components/ui/offCanvas/style";
 import {SettingsWrap, SettingsItem, SettingsFooter} from "@components/layout/settings/settings.style";
 
 const SettingsSidebar = ({isOpen, onHandler}) => {
     const [signedIn, setSignedIn] = useState(null);
+    const [adminUser, setAdminUser] = useState(false);
 
     useEffect(() => {
         setSignedIn(isSignedIn());
+        setAdminUser(isAdminUser());
     }, []);
 
     return (
@@ -38,13 +40,11 @@ const SettingsSidebar = ({isOpen, onHandler}) => {
                     <Link href="/account/orders">Order History</Link>
                 </SettingsItem>
 
-                <SettingsItem>
-                    <Link href="/admin">Admin Dashboard</Link>
-                </SettingsItem>
-
-                <SettingsItem>
-                    <Link href="/admin/audit-logs">Audit Logs</Link>
-                </SettingsItem>
+                {adminUser && (
+                    <SettingsItem>
+                        <Link href="/admin">Admin Dashboard</Link>
+                    </SettingsItem>
+                )}
             </SettingsWrap>
 
             <SettingsFooter>

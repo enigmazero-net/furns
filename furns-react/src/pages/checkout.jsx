@@ -5,6 +5,7 @@ import {useSelector} from "react-redux";
 import cogoToast from "cogo-toast";
 import settings from "@data/settings";
 import Layout from "@components/layout";
+import AuthGuard from "@components/auth/guard";
 import Input, {TextArea} from "@components/ui/input";
 import Button from "@components/ui/button";
 import Breadcrumb from "@components/ui/breadcrumb";
@@ -152,110 +153,112 @@ const CheckoutPage = () => {
 
             <PageContent>
                 <Container>
-                    <Row>
-                        <Col lg={8}>
-                            <FurnsPanel>
-                                <PanelTitle>Shipping And Contact Details</PanelTitle>
-                                <PanelSubtitle>
-                                    Checkout collects order details, then sends order creation and payment requests to internal services.
-                                </PanelSubtitle>
+                    <AuthGuard returnTo="/checkout">
+                        <Row>
+                            <Col lg={8}>
+                                <FurnsPanel>
+                                    <PanelTitle>Shipping And Contact Details</PanelTitle>
+                                    <PanelSubtitle>
+                                        Checkout collects order details, then sends order creation and payment requests to internal services.
+                                    </PanelSubtitle>
 
-                                <FormGrid>
-                                    <FieldBlock>
-                                        <Input id="recipient-name" name="recipientName" label="Recipient Name" placeholder="Test Customer" value={form.recipientName} onChange={onInputChange}/>
-                                    </FieldBlock>
-                                    <FieldBlock>
-                                        <Input id="phone" name="phone" label="Phone" placeholder="+94770000000" value={form.phone} onChange={onInputChange}/>
-                                    </FieldBlock>
-                                    <FieldBlock>
-                                        <Input id="city" name="city" label="City" placeholder="Colombo" value={form.city} onChange={onInputChange}/>
-                                    </FieldBlock>
-                                    <FieldBlock>
-                                        <Input id="province" name="province" label="Province" placeholder="Western" value={form.province} onChange={onInputChange}/>
-                                    </FieldBlock>
-                                    <FieldBlock>
-                                        <Input id="postal-code" name="postalCode" label="Postal Code" placeholder="00100" value={form.postalCode} onChange={onInputChange}/>
-                                    </FieldBlock>
-                                    <FieldBlock>
-                                        <Input id="country" name="country" label="Country" placeholder="Sri Lanka" value={form.country} onChange={onInputChange}/>
-                                    </FieldBlock>
-                                    <FullWidth>
+                                    <FormGrid>
                                         <FieldBlock>
-                                            <TextArea id="address-line1" name="addressLine1" label="Address Line 1" rows={3} placeholder="No. 123, Test Street" value={form.addressLine1} onChange={onInputChange}/>
+                                            <Input id="recipient-name" name="recipientName" label="Recipient Name" placeholder="Test Customer" value={form.recipientName} onChange={onInputChange}/>
                                         </FieldBlock>
-                                    </FullWidth>
-                                    <FullWidth>
                                         <FieldBlock>
-                                            <TextArea id="address-line2" name="addressLine2" label="Address Line 2" rows={2} placeholder="Apartment 4" value={form.addressLine2} onChange={onInputChange}/>
+                                            <Input id="phone" name="phone" label="Phone" placeholder="+94770000000" value={form.phone} onChange={onInputChange}/>
                                         </FieldBlock>
-                                    </FullWidth>
-                                </FormGrid>
-                            </FurnsPanel>
-                        </Col>
+                                        <FieldBlock>
+                                            <Input id="city" name="city" label="City" placeholder="Colombo" value={form.city} onChange={onInputChange}/>
+                                        </FieldBlock>
+                                        <FieldBlock>
+                                            <Input id="province" name="province" label="Province" placeholder="Western" value={form.province} onChange={onInputChange}/>
+                                        </FieldBlock>
+                                        <FieldBlock>
+                                            <Input id="postal-code" name="postalCode" label="Postal Code" placeholder="00100" value={form.postalCode} onChange={onInputChange}/>
+                                        </FieldBlock>
+                                        <FieldBlock>
+                                            <Input id="country" name="country" label="Country" placeholder="Sri Lanka" value={form.country} onChange={onInputChange}/>
+                                        </FieldBlock>
+                                        <FullWidth>
+                                            <FieldBlock>
+                                                <TextArea id="address-line1" name="addressLine1" label="Address Line 1" rows={3} placeholder="No. 123, Test Street" value={form.addressLine1} onChange={onInputChange}/>
+                                            </FieldBlock>
+                                        </FullWidth>
+                                        <FullWidth>
+                                            <FieldBlock>
+                                                <TextArea id="address-line2" name="addressLine2" label="Address Line 2" rows={2} placeholder="Apartment 4" value={form.addressLine2} onChange={onInputChange}/>
+                                            </FieldBlock>
+                                        </FullWidth>
+                                    </FormGrid>
+                                </FurnsPanel>
+                            </Col>
 
-                        <Col lg={4}>
-                            <FurnsPanel>
-                                <PanelTitle>Order Summary</PanelTitle>
-                                <FurnsTableWrap>
-                                    <FurnsTable $compact>
-                                        <thead>
-                                            <tr>
-                                                <th>Item</th>
-                                                <th>Total</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {cartItems.length ? (
-                                                cartItems.map((item) => (
-                                                    <tr key={item.cartId || item.title}>
-                                                        <td>{item.title} x {item.quantity}</td>
-                                                        <td>{CURRENCY}{Number((item.price || item.variations?.priceV2?.amount || 0) * item.quantity).toFixed(2)}</td>
-                                                    </tr>
-                                                ))
-                                            ) : (
+                            <Col lg={4}>
+                                <FurnsPanel>
+                                    <PanelTitle>Order Summary</PanelTitle>
+                                    <FurnsTableWrap>
+                                        <FurnsTable $compact>
+                                            <thead>
                                                 <tr>
-                                                    <td colSpan={2}>Your cart is empty.</td>
+                                                    <th>Item</th>
+                                                    <th>Total</th>
                                                 </tr>
-                                            )}
-                                            <tr>
-                                                <td>Delivery</td>
-                                                <td>{CURRENCY}{deliveryFee.toFixed(2)}</td>
-                                            </tr>
-                                            <tr>
-                                                <td><strong>Total</strong></td>
-                                                <td><strong>{CURRENCY}{total.toFixed(2)}</strong></td>
-                                            </tr>
-                                        </tbody>
-                                    </FurnsTable>
-                                </FurnsTableWrap>
-                                <ActionRow>
-                                    <Button
-                                        tag="button"
-                                        bg="primary"
-                                        color="white"
-                                        hvrBg="secondary"
-                                        loading={isSubmitting}
-                                        onClick={onPlaceOrderHandler}
-                                    >
-                                        Place Order / Pay Now
-                                    </Button>
+                                            </thead>
+                                            <tbody>
+                                                {cartItems.length ? (
+                                                    cartItems.map((item) => (
+                                                        <tr key={item.cartId || item.title}>
+                                                            <td>{item.title} x {item.quantity}</td>
+                                                            <td>{CURRENCY}{Number((item.price || item.variations?.priceV2?.amount || 0) * item.quantity).toFixed(2)}</td>
+                                                        </tr>
+                                                    ))
+                                                ) : (
+                                                    <tr>
+                                                        <td colSpan={2}>Your cart is empty.</td>
+                                                    </tr>
+                                                )}
+                                                <tr>
+                                                    <td>Delivery</td>
+                                                    <td>{CURRENCY}{deliveryFee.toFixed(2)}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>Total</strong></td>
+                                                    <td><strong>{CURRENCY}{total.toFixed(2)}</strong></td>
+                                                </tr>
+                                            </tbody>
+                                        </FurnsTable>
+                                    </FurnsTableWrap>
+                                    <ActionRow>
+                                        <Button
+                                            tag="button"
+                                            bg="primary"
+                                            color="white"
+                                            hvrBg="secondary"
+                                            loading={isSubmitting}
+                                            onClick={onPlaceOrderHandler}
+                                        >
+                                            Place Order / Pay Now
+                                        </Button>
+                                        {signedIn === false && (
+                                            <>
+                                                <Button tag="button" bg="secondary" color="white" hvrBg="primary" onClick={() => loginWithKeycloak("/checkout")}>
+                                                    Login
+                                                </Button>
+                                                <Button tag="button" bg="secondary" color="white" hvrBg="primary" onClick={() => registerWithKeycloak("/checkout")}>
+                                                    Sign Up
+                                                </Button>
+                                            </>
+                                        )}
+                                    </ActionRow>
                                     {signedIn === false && (
-                                        <>
-                                            <Button tag="button" bg="secondary" color="white" hvrBg="primary" onClick={() => loginWithKeycloak("/checkout")}>
-                                                Login
-                                            </Button>
-                                            <Button tag="button" bg="secondary" color="white" hvrBg="primary" onClick={() => registerWithKeycloak("/checkout")}>
-                                                Sign Up
-                                            </Button>
-                                        </>
+                                        <MutedText>You must be signed in before an order or payment request is sent.</MutedText>
                                     )}
-                                </ActionRow>
-                                {signedIn === false && (
-                                    <MutedText>You must be signed in before an order or payment request is sent.</MutedText>
-                                )}
-                            </FurnsPanel>
-                        </Col>
-                    </Row>
+                                </FurnsPanel>
+                            </Col>
+                        </Row>
+                    </AuthGuard>
                 </Container>
             </PageContent>
         </Layout>

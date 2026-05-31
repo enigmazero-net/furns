@@ -36,19 +36,19 @@ Furns is a Next.js furniture e-commerce frontend for the MIS3202 online store pr
 
 ## Technology Stack
 
-- Next.js 12
-- React 17
+- Next.js 16
+- React 19
 - Redux Toolkit and Redux Persist for cart state
 - Styled Components and Bootstrap Styled UI primitives
 - Keycloak OpenID Connect Authorization Code + PKCE flow
-- Deployed REST backend at `http://178.105.114.143/api`
+- Deployed REST backend available over HTTPS through `NEXT_PUBLIC_API_BASE_URL`
 
 ## Requirements
 
-- Node.js compatible with Next.js 12
+- Node.js compatible with Next.js 16
 - npm
 - Access to the deployed API server
-- SSH access to the server if you want to use Keycloak locally through the tunnel
+- SSH access to the server if you need direct Keycloak administration through a tunnel
 
 ## Environment Variables
 
@@ -57,8 +57,8 @@ The frontend reads environment variables from `furns-react/.env.local`.
 Use this content:
 
 ```env
-NEXT_PUBLIC_API_BASE_URL=http://178.105.114.143/api
-NEXT_PUBLIC_KEYCLOAK_URL=http://localhost:8080
+NEXT_PUBLIC_API_BASE_URL=https://your-api-domain.example/api
+NEXT_PUBLIC_KEYCLOAK_URL=https://your-keycloak-domain.example
 NEXT_PUBLIC_KEYCLOAK_REALM=online-store
 NEXT_PUBLIC_KEYCLOAK_CLIENT_ID=online-store-app
 ```
@@ -70,17 +70,17 @@ NEXT_PUBLIC_KEYCLOAK_CLIENT_ID=online-store-app
 Base URL:
 
 ```text
-http://178.105.114.143/api
+https://your-api-domain.example/api
 ```
 
 Public endpoints:
 
 ```bash
-curl http://178.105.114.143/api/health
-curl http://178.105.114.143/api/categories
-curl http://178.105.114.143/api/products
-curl http://178.105.114.143/api/products/PRODUCT_ID_HERE
-curl http://178.105.114.143/api/products/slug/aurora-fabric-sofa
+curl https://your-api-domain.example/api/health
+curl https://your-api-domain.example/api/categories
+curl https://your-api-domain.example/api/products
+curl https://your-api-domain.example/api/products/PRODUCT_ID_HERE
+curl https://your-api-domain.example/api/products/slug/aurora-fabric-sofa
 ```
 
 Protected customer endpoints:
@@ -111,7 +111,9 @@ Authorization: Bearer <access_token>
 
 ## Keycloak Access
 
-Keycloak runs on the remote server. Use an SSH tunnel so the frontend can access it at `localhost:8080`:
+Keycloak must be reachable over HTTPS for production and HTTPS frontend testing. If the server only exposes Keycloak over a private HTTP port, put a TLS reverse proxy in front of it and use that HTTPS origin for `NEXT_PUBLIC_KEYCLOAK_URL`.
+
+For direct server administration, you can still use an SSH tunnel:
 
 ```bash
 ssh -L 8080:127.0.0.1:8080 root@178.105.114.143
@@ -123,20 +125,20 @@ Then open the Keycloak admin console:
 http://localhost:8080/admin
 ```
 
-The frontend is configured to use:
+Production frontend configuration should use:
 
 ```text
-Keycloak URL:      http://localhost:8080
+Keycloak URL:      https://your-keycloak-domain.example
 Realm:             online-store
 Client ID:         online-store-app
-Callback route:    http://localhost:3000/auth/callback
+Callback route:    https://your-frontend-domain.example/auth/callback
 ```
 
-Make sure the Keycloak client allows the frontend callback URL and local web origin:
+Make sure the Keycloak client allows the frontend callback URL and web origin:
 
 ```text
-Valid redirect URI: http://localhost:3000/auth/callback
-Web origin:         http://localhost:3000
+Valid redirect URI: https://your-frontend-domain.example/auth/callback
+Web origin:         https://your-frontend-domain.example
 ```
 
 ## Install and Run
@@ -268,7 +270,7 @@ Central API adapter. It normalizes backend product/category/order/payment/audit 
 furns-react/src/services/auth.js
 ```
 
-Keycloak PKCE login, registration, callback token exchange, local token storage, bearer header helpers, and simple JWT profile parsing.
+Keycloak PKCE login, registration, callback token exchange, browser-session token storage, bearer header helpers, and simple JWT profile parsing. The preferred production target is backend-managed `HttpOnly`, `Secure`, `SameSite` session cookies so JavaScript does not handle access tokens.
 
 ```text
 furns-react/src/pages/checkout.jsx
@@ -318,21 +320,21 @@ collections.edges
 If products do not load:
 
 ```bash
-curl http://178.105.114.143/api/health
-curl http://178.105.114.143/api/products
+curl https://your-api-domain.example/api/health
+curl https://your-api-domain.example/api/products
 ```
 
 If login does not redirect correctly:
 
-1. Confirm the SSH tunnel is running.
-2. Open `http://localhost:8080/admin`.
+1. Confirm the HTTPS Keycloak URL is reachable from the browser.
+2. Open the Keycloak admin console.
 3. Check that the `online-store-app` client exists.
-4. Check that `http://localhost:3000/auth/callback` is allowed as a redirect URI.
+4. Check that your frontend `/auth/callback` URL is allowed as a redirect URI.
 5. Check browser console errors for CORS or invalid redirect messages.
 
 If checkout says login is required:
 
-That is expected when no Keycloak access token exists in browser local storage. Login or sign up first, then return to checkout.
+That is expected when no Keycloak access token exists in the browser session. Login or sign up first, then return to checkout.
 
 If protected API calls return `401`:
 
@@ -341,7 +343,8 @@ The request did not include a valid bearer token, the token expired, or the user
 ## Current Limitations
 
 - Token refresh is not implemented. If a token expires, login again.
-- Some protected pages keep local mock data as a visual fallback until a valid token is available.
+- Frontend-only authentication still uses browser-session storage. Move token handling behind backend `HttpOnly` cookies before treating this as hardened production auth.
+- Customer protected pages do not render mock private order data before a valid token is available.
 - Admin authorization is expected to be enforced by the backend and Keycloak roles.
 - The UI uses existing template components, so the API adapter normalizes backend data rather than replacing every product component.
 
@@ -358,7 +361,7 @@ npm run build
 npm run start
 
 # Check API health
-curl http://178.105.114.143/api/health
+curl https://your-api-domain.example/api/health
 
 # Start Keycloak tunnel
 ssh -L 8080:127.0.0.1:8080 root@178.105.114.143
