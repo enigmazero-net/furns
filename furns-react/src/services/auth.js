@@ -1,7 +1,9 @@
 const AUTH_STORAGE_KEY = "furns-session";
 const PKCE_STORAGE_KEY = "furns-pkce";
+const AUTH_COOKIE_NAME = "furns_session";
 
 const keycloakUrl = process.env.NEXT_PUBLIC_KEYCLOAK_URL || "";
+const allowInsecureKeycloak = process.env.NEXT_PUBLIC_ALLOW_INSECURE_KEYCLOAK === "true";
 const keycloakRealm = process.env.NEXT_PUBLIC_KEYCLOAK_REALM || "online-store";
 const keycloakClientId = process.env.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID || "online-store-app";
 const adminRoles = (process.env.NEXT_PUBLIC_ADMIN_ROLES || "admin,administrator")
@@ -16,13 +18,25 @@ const getBrowserStorage = () => {
     return window.sessionStorage;
 };
 
+const secureCookieFlag = () => (window.location.protocol === "https:" ? "; Secure" : "");
+
+const setAuthCookie = (maxAgeSeconds) => {
+    if (!isBrowser()) return;
+    document.cookie = `${AUTH_COOKIE_NAME}=1; Path=/; Max-Age=${Math.max(0, Number(maxAgeSeconds) || 0)}; SameSite=Lax${secureCookieFlag()}`;
+};
+
+const clearAuthCookie = () => {
+    if (!isBrowser()) return;
+    document.cookie = `${AUTH_COOKIE_NAME}=; Path=/; Max-Age=0; SameSite=Lax${secureCookieFlag()}`;
+};
+
 const getKeycloakUrl = () => {
     if (!keycloakUrl) {
         throw new Error("NEXT_PUBLIC_KEYCLOAK_URL is required.");
     }
 
-    if (keycloakUrl.startsWith("http://")) {
-        throw new Error("NEXT_PUBLIC_KEYCLOAK_URL must use HTTPS.");
+    if (keycloakUrl.startsWith("http://") && !allowInsecureKeycloak) {
+        throw new Error("NEXT_PUBLIC_KEYCLOAK_URL must use HTTPS unless NEXT_PUBLIC_ALLOW_INSECURE_KEYCLOAK=true is set.");
     }
 
     return keycloakUrl.replace(/\/+$/, "");
@@ -175,6 +189,7 @@ export const clearAuthState = () => {
     if (!isBrowser()) return;
     getBrowserStorage()?.removeItem(AUTH_STORAGE_KEY);
     getBrowserStorage()?.removeItem(PKCE_STORAGE_KEY);
+    clearAuthCookie();
 };
 
 export const authHeaders = () => {
@@ -243,10 +258,12 @@ export const exchangeKeycloakCode = async ({code, state}) => {
     }
 
     const auth = await response.json();
+    const expiresIn = Number(auth.expires_in || 0);
     getBrowserStorage()?.setItem(AUTH_STORAGE_KEY, JSON.stringify({
         ...auth,
-        expires_at: Date.now() + (Number(auth.expires_in || 0) * 1000),
+        expires_at: Date.now() + (expiresIn * 1000),
     }));
+    setAuthCookie(expiresIn);
 
     getBrowserStorage()?.removeItem(PKCE_STORAGE_KEY);
     return {auth, redirectPath: pkce.redirectPath || "/account"};

@@ -59,11 +59,21 @@ Use this content:
 ```env
 NEXT_PUBLIC_API_BASE_URL=https://your-api-domain.example/api
 NEXT_PUBLIC_KEYCLOAK_URL=https://your-keycloak-domain.example
+NEXT_PUBLIC_ALLOW_INSECURE_KEYCLOAK=false
 NEXT_PUBLIC_KEYCLOAK_REALM=online-store
 NEXT_PUBLIC_KEYCLOAK_CLIENT_ID=online-store-app
 ```
 
 `furns-react/.env.local` is intentionally ignored by git. `furns-react/.env.template` contains the same keys as a template.
+
+If Keycloak is temporarily available only over HTTP on the same server, set an explicit development override:
+
+```env
+NEXT_PUBLIC_KEYCLOAK_URL=http://178.105.114.143/keycloak
+NEXT_PUBLIC_ALLOW_INSECURE_KEYCLOAK=true
+```
+
+Do not use that override for production HTTPS frontend traffic. Move Keycloak behind a TLS reverse proxy as soon as a domain or certificate path is available.
 
 ## Backend API
 
@@ -111,7 +121,7 @@ Authorization: Bearer <access_token>
 
 ## Keycloak Access
 
-Keycloak must be reachable over HTTPS for production and HTTPS frontend testing. If the server only exposes Keycloak over a private HTTP port, put a TLS reverse proxy in front of it and use that HTTPS origin for `NEXT_PUBLIC_KEYCLOAK_URL`.
+Keycloak must be reachable over HTTPS for production and HTTPS frontend testing. If the server only exposes Keycloak over HTTP for now, `NEXT_PUBLIC_ALLOW_INSECURE_KEYCLOAK=true` allows that temporary setup, but it should be removed once Keycloak is behind TLS.
 
 For direct server administration, you can still use an SSH tunnel:
 
@@ -279,6 +289,12 @@ furns-react/src/pages/checkout.jsx
 Checkout form and payment start. This page blocks payment when the user is not signed in.
 
 ```text
+furns-react/middleware.js
+```
+
+Redirects unauthenticated requests for protected frontend routes to `/login?returnTo=...` before a page shell is served. This applies to `/admin`, `/admin/orders`, `/admin/products`, `/admin/audit-logs`, `/account/orders`, and `/checkout`. The middleware checks only a short-lived browser marker cookie set after Keycloak login; backend authorization remains the security boundary.
+
+```text
 furns-react/src/global/actions/cartAction.js
 ```
 
@@ -343,7 +359,7 @@ The request did not include a valid bearer token, the token expired, or the user
 ## Current Limitations
 
 - Token refresh is not implemented. If a token expires, login again.
-- Frontend-only authentication still uses browser-session storage. Move token handling behind backend `HttpOnly` cookies before treating this as hardened production auth.
+- Frontend-only authentication still uses browser-session storage plus a non-sensitive marker cookie for protected-route redirects. Move token handling behind backend `HttpOnly` cookies before treating this as hardened production auth.
 - Customer protected pages do not render mock private order data before a valid token is available.
 - Admin authorization is expected to be enforced by the backend and Keycloak roles.
 - The UI uses existing template components, so the API adapter normalizes backend data rather than replacing every product component.
