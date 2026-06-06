@@ -6,6 +6,7 @@ const keycloakUrl = process.env.NEXT_PUBLIC_KEYCLOAK_URL || "";
 const allowInsecureKeycloak = process.env.NEXT_PUBLIC_ALLOW_INSECURE_KEYCLOAK === "true";
 const keycloakRealm = process.env.NEXT_PUBLIC_KEYCLOAK_REALM || "online-store";
 const keycloakClientId = process.env.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID || "online-store-app";
+const frontendOrigin = process.env.NEXT_PUBLIC_FRONTEND_ORIGIN || "";
 const adminRoles = (process.env.NEXT_PUBLIC_ADMIN_ROLES || "admin,administrator")
     .split(",")
     .map((role) => role.trim().toLowerCase())
@@ -40,6 +41,11 @@ const getKeycloakUrl = () => {
     }
 
     return keycloakUrl.replace(/\/+$/, "");
+};
+
+const getAuthCallbackUri = () => {
+    const origin = frontendOrigin || window.location.origin;
+    return `${origin.replace(/\/+$/, "")}/auth/callback`;
 };
 
 const base64UrlEncode = (value) => {
@@ -203,7 +209,7 @@ const startKeycloakFlow = async (redirectPath, endpoint = "auth") => {
     const state = randomString(32);
     const verifier = randomString(96);
     const challenge = await createCodeChallenge(verifier);
-    const redirectUri = `${window.location.origin}/auth/callback`;
+    const redirectUri = getAuthCallbackUri();
 
     getBrowserStorage()?.setItem(PKCE_STORAGE_KEY, JSON.stringify({
         state,
@@ -239,7 +245,7 @@ export const exchangeKeycloakCode = async ({code, state}) => {
     const body = new URLSearchParams({
         grant_type: "authorization_code",
         client_id: keycloakClientId,
-        redirect_uri: `${window.location.origin}/auth/callback`,
+        redirect_uri: getAuthCallbackUri(),
         code,
         code_verifier: pkce.verifier,
     });
